@@ -14,7 +14,6 @@ tdrstyle.setTDRStyle()
 
 effiMin = 0.68
 effiMax = 1.07
-
 sfMin = 0.78
 sfMax = 1.12
 
@@ -115,10 +114,12 @@ def EffiGraph1D(effDataList, effMCList, sfList ,nameout, xAxis = 'pT', yAxis = '
     xMin = 10
     xMax = 200
     if 'pT' in xAxis or 'pt' in xAxis:
-        p1.SetLogx()
-        p2.SetLogx()    
-        xMin = 10
-        xMax = 500
+        ##p1.SetLogx()
+        ##p2.SetLogx()    
+        #xMin = 10
+        #xMax = 500
+        xMin = 0.5
+        xMax = 20.
     elif 'vtx' in xAxis or 'Vtx' in xAxis or 'PV' in xAxis:
         xMin =  3
         xMax = 42
@@ -155,14 +156,18 @@ def EffiGraph1D(effDataList, effMCList, sfList ,nameout, xAxis = 'pT', yAxis = '
         grBinsEffData.SetMarkerColor( graphColors[igr] )
         grBinsEffData.SetLineColor(   graphColors[igr] )
         grBinsEffData.SetLineWidth(2) 
-                
-        grBinsEffData.GetHistogram().SetMinimum(effiMin)
-        grBinsEffData.GetHistogram().SetMaximum(effiMax)
+        
+        #grBinsEffData.GetHistogram().SetMinimum(effiMin)
+        #grBinsEffData.GetHistogram().SetMaximum(effiMax)
+        grBinsEffData.GetHistogram().SetMinimum(0.)
+        grBinsEffData.GetHistogram().SetMaximum(1.2)
 
         grBinsEffData.GetHistogram().GetXaxis().SetLimits(xMin,xMax)
         grBinsSF.GetHistogram()     .GetXaxis().SetLimits(xMin,xMax)
-        grBinsSF.GetHistogram().SetMinimum(sfMin)
-        grBinsSF.GetHistogram().SetMaximum(sfMax)
+        #grBinsSF.GetHistogram().SetMinimum(sfMin)
+        #grBinsSF.GetHistogram().SetMaximum(sfMax)
+        grBinsSF.GetHistogram().SetMinimum(0)
+        grBinsSF.GetHistogram().SetMaximum(1.5)
         
         grBinsSF.GetHistogram().GetXaxis().SetTitleOffset(1)
         if 'eta' in xAxis or 'Eta' in xAxis:
@@ -184,12 +189,14 @@ def EffiGraph1D(effDataList, effMCList, sfList ,nameout, xAxis = 'pT', yAxis = '
         listOfTGraph1.append( grBinsEffData )
         listOfTGraph2.append( grBinsSF ) 
         listOfMC.append( grBinsEffMC   )
-        if 'eta' in yAxis or 'Eta' in yAxis:
-            leg.AddEntry( grBinsEffData, '%1.3f #leq | #eta | #leq  %1.3f' % (float(key[0]),float(key[1])), "PL")        
-        elif 'pt' in yAxis or 'pT' in yAxis:
-            leg.AddEntry( grBinsEffData, '%3.0f #leq p_{T} #leq  %3.0f GeV' % (float(key[0]),float(key[1])), "PL")        
-        elif 'vtx' in yAxis or 'Vtx' in yAxis or 'PV' in yAxis:
-            leg.AddEntry( grBinsEffData, '%3.0f #leq nVtx #leq  %3.0f'      % (float(key[0]),float(key[1])), "PL")        
+        # chiara
+        #if 'eta' in yAxis or 'Eta' in yAxis:
+        #    leg.AddEntry( grBinsEffData, '%1.3f #leq | #eta | #leq  %1.3f' % (float(key[0]),float(key[1])), "PL")        
+        #elif 'pt' in yAxis or 'pT' in yAxis:
+        #    leg.AddEntry( grBinsEffData, '%3.0f #leq p_{T} #leq  %3.0f GeV' % (float(key[0]),float(key[1])), "PL")        
+        #elif 'vtx' in yAxis or 'Vtx' in yAxis or 'PV' in yAxis:
+        #    leg.AddEntry( grBinsEffData, '%3.0f #leq nVtx #leq  %3.0f'      % (float(key[0]),float(key[1])), "PL")        
+        # chiara
 
         
     for igr in range(len(listOfTGraph1)+1):

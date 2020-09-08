@@ -1,4 +1,4 @@
-
+###
 ### python specific import
 import argparse
 import os
@@ -98,9 +98,9 @@ if args.createHists:
         if sampleType == args.sample or args.sample == 'all' :
             print 'creating histogram for sample '
             sample.dump()
-            var = { 'name' : 'pair_mass', 'nbins' : 80, 'min' : 50, 'max': 130 }
+            var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.5, 'max': 3.5 }
             if sample.mcTruth:
-                var = { 'name' : 'pair_mass', 'nbins' : 80, 'min' : 50, 'max': 130 }
+                var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.5, 'max': 3.5 }
             tnpHist.makePassFailHistograms( sample, tnpConf.flags[args.flag], tnpBins, var )
 
     sys.exit(0)
@@ -138,11 +138,11 @@ if  args.doFit:
     for ib in range(len(tnpBins['bins'])):
         if (args.binNumber >= 0 and ib == args.binNumber) or args.binNumber < 0:
             if args.altSig:                 
-                tnpRoot.histFitterAltSig(  sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParAltSigFit )
+                tnpRoot.histFitterAltSigJPsi( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParAltSigFitJPsi )
             elif args.altBkg:
-                tnpRoot.histFitterAltBkg(  sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParAltBkgFit )
+                tnpRoot.histFitterAltBkgJPsi( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParAltBkgFitJPsi )
             else:
-                tnpRoot.histFitterNominal( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParNomFit )
+                tnpRoot.histFitterNominalJPsi( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParNomFitJPsi )
 
     args.doPlot = True
      
@@ -179,8 +179,10 @@ if args.sumUp:
     sampleToFit.dump()
     info = {
         'data'        : sampleToFit.histFile,
-        'dataNominal' : sampleToFit.nominalFit,
-        'dataAltSig'  : sampleToFit.altSigFit ,
+        ###'dataNominal' : sampleToFit.nominalFit,
+        'dataNominal' : sampleToFit.altSigFit,
+        ###'dataAltSig'  : sampleToFit.altSigFit,
+        'dataAltSig'  : sampleToFit.nominalFit,  
         'dataAltBkg'  : sampleToFit.altBkgFit ,
         'mcNominal'   : sampleToFit.mcRef.histFile,
         'mcAlt'       : None,

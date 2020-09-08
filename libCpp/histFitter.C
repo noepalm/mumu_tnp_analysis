@@ -30,9 +30,10 @@ public:
   ~tnpFitter(void) {if( _work != 0 ) delete _work; }
   void setZLineShapes(TH1 *hZPass, TH1 *hZFail );
   void setWorkspace(std::vector<std::string>);
+  void setWorkspaceJPsi(std::vector<std::string>);
   void setOutputFile(TFile *fOut ) {_fOut = fOut;}
   void fits(bool mcTruth,std::string title = "");
-  void useMinos(bool minos = true) {_useMinos = minos;}
+  void useMinos(bool minos = false) {_useMinos = minos;}
   void textParForCanvas(RooFitResult *resP, RooFitResult *resF, TPad *p);
   
   void fixSigmaFtoSigmaP(bool fix=true) { _fixSigmaFtoSigmaP= fix;}
@@ -59,20 +60,24 @@ tnpFitter::tnpFitter(TFile *filein, std::string histname   ) : _useMinos(false),
   /// MC histos are done between 50-130 to do the convolution properly
   /// but when doing MC fit in 60-120, need to zero bins outside the range
   for( int ib = 0; ib <= hPass->GetXaxis()->GetNbins()+1; ib++ )
-   if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
+    //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
+   if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.5 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
      hPass->SetBinContent(ib,0);
      hFail->SetBinContent(ib,0);
    }
   
   _work = new RooWorkspace("w") ;
-  _work->factory("x[50,130]");
+  //_work->factory("x[50,130]");
+  _work->factory("x[2.5,3.5]");
 
   RooDataHist rooPass("hPass","hPass",*_work->var("x"),hPass);
   RooDataHist rooFail("hFail","hFail",*_work->var("x"),hFail);
   _work->import(rooPass) ;
   _work->import(rooFail) ;
-  _xFitMin = 60;
-  _xFitMax = 120;
+  _xFitMin = 2.5;
+  _xFitMax = 3.5;
+  //_xFitMin = 60;
+  //_xFitMax = 120;
 }
 
 tnpFitter::tnpFitter(TH1 *hPass, TH1 *hFail, std::string histname  ) : _useMinos(false),_fixSigmaFtoSigmaP(false) {
@@ -84,23 +89,28 @@ tnpFitter::tnpFitter(TH1 *hPass, TH1 *hFail, std::string histname  ) : _useMinos
   /// MC histos are done between 50-130 to do the convolution properly
   /// but when doing MC fit in 60-120, need to zero bins outside the range
   for( int ib = 0; ib <= hPass->GetXaxis()->GetNbins()+1; ib++ )
-    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
+    //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
+    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.5 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
       hPass->SetBinContent(ib,0);
       hFail->SetBinContent(ib,0);
+      cout << "chiara: hPass->GetMean() = " << hPass->GetMean() << ", RMS = " << hPass->GetRMS() << endl;
+      cout << "chiara: hFail->GetMean() = " << hFail->GetMean() << ", RMS = " << hFail->GetRMS() << endl;
     }
   
   _work = new RooWorkspace("w") ;
-  _work->factory("x[50,130]");
+  //_work->factory("x[50,130]");
+  _work->factory("x[2.5,3.5]");
   
   RooDataHist rooPass("hPass","hPass",*_work->var("x"),hPass);
   RooDataHist rooFail("hFail","hFail",*_work->var("x"),hFail);
   _work->import(rooPass) ;
   _work->import(rooFail) ;
-  _xFitMin = 60;
-  _xFitMax = 120;
+  _xFitMin = 2.5;
+  _xFitMax = 3.5;
+  //_xFitMin = 60;
+  //_xFitMax = 120;
   
 }
-
 
 void tnpFitter::setZLineShapes(TH1 *hZPass, TH1 *hZFail ) {
   RooDataHist rooPass("hGenZPass","hGenZPass",*_work->var("x"),hZPass);
@@ -127,13 +137,28 @@ void tnpFitter::setWorkspace(std::vector<std::string> workspace) {
   _work->Print();			         
 }
 
+void tnpFitter::setWorkspaceJPsi(std::vector<std::string> workspace) {
+  for( unsigned icom = 0 ; icom < workspace.size(); ++icom ) {
+    _work->factory(workspace[icom].c_str());
+  }
+
+  _work->factory(TString::Format("nSigP[%f,0.5,%f]",_nTotP*0.9,_nTotP*1.5));
+  _work->factory(TString::Format("nBkgP[%f,0.5,%f]",_nTotP*0.1,_nTotP*1.5));
+  _work->factory(TString::Format("nSigF[%f,0.5,%f]",_nTotF*0.9,_nTotF*1.5));
+  _work->factory(TString::Format("nBkgF[%f,0.5,%f]",_nTotF*0.1,_nTotF*1.5));
+  _work->factory("SUM::pdfPass(nSigP*sigResPass,nBkgP*bkgPass)");
+  _work->factory("SUM::pdfFail(nSigF*sigResFail,nBkgF*bkgFail)");
+  _work->Print();			         
+}
+
 void tnpFitter::fits(bool mcTruth,string title) {
 
   cout << " title : " << title << endl;
 
-  
   RooAbsPdf *pdfPass = _work->pdf("pdfPass");
   RooAbsPdf *pdfFail = _work->pdf("pdfFail");
+
+  cout << " A " << endl;
 
   if( mcTruth ) {
     _work->var("nBkgP")->setVal(0); _work->var("nBkgP")->setConstant();
@@ -150,6 +175,8 @@ void tnpFitter::fits(bool mcTruth,string title) {
     if( _work->var("gammaF") ) _work->var("gammaF")->setConstant();
   }
 
+  cout << " B " << endl;
+
   /// FC: seems to be better to change the actual range than using a fitRange in the fit itself (???)
   /// FC: I don't know why but the integral is done over the full range in the fit not on the reduced range
   _work->var("x")->setRange(_xFitMin,_xFitMax);
@@ -161,17 +188,30 @@ void tnpFitter::fits(bool mcTruth,string title) {
     _work->var("sigmaF")->setConstant();
   }
 
-  _work->var("sigmaF")->setVal(_work->var("sigmaP")->getVal());
-  _work->var("sigmaF")->setRange(0.8* _work->var("sigmaP")->getVal(), 3.0* _work->var("sigmaP")->getVal());
+  cout << " C " << endl;
+
+  // Chiara
+  ////_work->var("meanF")->setVal(_work->var("meanP")->getVal());
+  ////_work->var("meanF")->setConstant();
+  //_work->var("sigmaRF")->setVal(_work->var("sigmaRP")->getVal());
+  //_work->var("sigmaRF")->setConstant();
+  // Chiara
+
+  if ( _work->var("sigmaF") ) _work->var("sigmaF")->setVal(_work->var("sigmaP")->getVal());
+  if ( _work->var("sigmaF") ) _work->var("sigmaF")->setRange(0.8* _work->var("sigmaP")->getVal(), 3.0* _work->var("sigmaP")->getVal());
   RooFitResult* resFail = pdfFail->fitTo(*_work->data("hFail"),Minos(_useMinos),SumW2Error(kTRUE),Save(),Range("fitMassRange"));
-  //RooFitResult* resFail = pdfFail->fitTo(*_work->data("hFail"),Minos(_useMinos),SumW2Error(kTRUE),Save());
 
+  cout << " D " << endl;
 
-  RooPlot *pPass = _work->var("x")->frame(60,120);
-  RooPlot *pFail = _work->var("x")->frame(60,120);
+  //RooPlot *pPass = _work->var("x")->frame(60,120);
+  //RooPlot *pFail = _work->var("x")->frame(60,120);
+  RooPlot *pPass = _work->var("x")->frame(2.5,3.5);
+  RooPlot *pFail = _work->var("x")->frame(2.5,3.5);
   pPass->SetTitle("passing probe");
   pFail->SetTitle("failing probe");
   
+  cout << " E " << endl;
+
   _work->data("hPass") ->plotOn( pPass );
   _work->pdf("pdfPass")->plotOn( pPass, LineColor(kRed) );
   _work->pdf("pdfPass")->plotOn( pPass, Components("bkgPass"),LineColor(kBlue),LineStyle(kDashed));
@@ -182,6 +222,8 @@ void tnpFitter::fits(bool mcTruth,string title) {
   _work->pdf("pdfFail")->plotOn( pFail, Components("bkgFail"),LineColor(kBlue),LineStyle(kDashed));
   _work->data("hFail") ->plotOn( pFail );
 
+  cout << " F " << endl;
+
   TCanvas c("c","c",1100,450);
   c.Divide(3,1);
   TPad *padText = (TPad*)c.GetPad(1);
@@ -189,12 +231,14 @@ void tnpFitter::fits(bool mcTruth,string title) {
   c.cd(2); pPass->Draw();
   c.cd(3); pFail->Draw();
 
+  cout << " G " << endl;
+
   _fOut->cd();
   c.Write(TString::Format("%s_Canv",_histname_base.c_str()),TObject::kOverwrite);
   resPass->Write(TString::Format("%s_resP",_histname_base.c_str()),TObject::kOverwrite);
   resFail->Write(TString::Format("%s_resF",_histname_base.c_str()),TObject::kOverwrite);
 
-  
+  cout << " H " << endl;  
 }
 
 

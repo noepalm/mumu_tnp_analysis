@@ -114,12 +114,17 @@ def makeTGraphFromList( listOfEfficiencies , keyMin, keyMax ):
     
     ip = 0
     for point in listOfEfficiencies:
+        print "chiara"
+        print ip 
+        print point[keyMin]
+        print point[keyMax]
+        print "chiara"
         grOut.SetPoint(     ip, (point[keyMin]+point[keyMax])/2. , point['val'] )
         grOut.SetPointError(ip, (point[keyMax]-point[keyMin])/2. , point['err'] )
         ip = ip + 1
 
-    #    print "###########################"
-    #    print listOfEff
+#        print "###########################"
+#        print listOfEff
     #    grOut.Print()
     return grOut
 

@@ -2,13 +2,13 @@ import ROOT as rt
 rt.gROOT.LoadMacro('./libCpp/histFitter.C+')
 rt.gROOT.LoadMacro('./libCpp/RooCBExGaussShape.cc+')
 rt.gROOT.LoadMacro('./libCpp/RooCMSShape.cc+')
+rt.gROOT.LoadMacro('./libCpp/RooCruijff.cc+')
 rt.gROOT.SetBatch(1)
 
 from ROOT import tnpFitter
 
 import re
 import math
-
 
 minPtForSwitch = 70
 
@@ -131,6 +131,53 @@ def histFitterNominal( sample, tnpBin, tnpWorkspaceParam ):
     rootfile.Close()
 
 
+#############################################################
+########## nominal fitter J/Psi
+#############################################################
+def histFitterNominalJPsi( sample, tnpBin, tnpWorkspaceParam ):
+        
+    tnpWorkspaceFunc = [
+        "Gaussian::sigResPass(x,meanP,sigmaP)",
+        "Gaussian::sigResFail(x,meanF,sigmaF)",
+        "Exponential::bkgPass(x, alphaP)",
+        "Exponential::bkgFail(x, alphaF)",
+        ]
+
+    tnpWorkspace = []
+    tnpWorkspace.extend(tnpWorkspaceParam)
+    tnpWorkspace.extend(tnpWorkspaceFunc)
+    
+    ## init fitter
+    infile = rt.TFile( sample.histFile, "read")
+    hP = infile.Get('%s_Pass' % tnpBin['name'] )
+    hF = infile.Get('%s_Fail' % tnpBin['name'] )
+    fitter = tnpFitter( hP, hF, tnpBin['name'] )
+    infile.Close()
+
+    ## setup
+    fitter.useMinos()
+    rootfile = rt.TFile(sample.nominalFit,'update')
+    fitter.setOutputFile( rootfile )
+    
+    ## generated JPsi LineShape
+    fileTruth  = rt.TFile(sample.mcRef.histFile,'read')
+    histZLineShapeP = fileTruth.Get('%s_Pass'%tnpBin['name'])
+    histZLineShapeF = fileTruth.Get('%s_Fail'%tnpBin['name'])
+    fitter.setZLineShapes(histZLineShapeP,histZLineShapeF)
+    fileTruth.Close()
+
+    ### set workspace
+    workspace = rt.vector("string")()
+    for iw in tnpWorkspace:
+        workspace.push_back(iw)
+    fitter.setWorkspace( workspace )
+
+    title = tnpBin['title'].replace(';',' - ')
+    title = title.replace('probe_Ele_eta','#eta_{SC}')
+    title = title.replace('probe_Ele_pt','p_{T}')
+    fitter.fits(sample.mcTruth,title)
+    rootfile.Close()
+
 
 #############################################################
 ########## alternate signal fitter
@@ -187,6 +234,56 @@ def histFitterAltSig( sample, tnpBin, tnpWorkspaceParam ):
     rootfile.Close()
 
 
+def histFitterAltSigJPsi( sample, tnpBin, tnpWorkspaceParam ):
+
+    print "tnpWorkspaceFunc" 
+
+    tnpWorkspaceFunc = [
+        "RooCruijff::sigResPass(x,meanP,sigmaLP,sigmaRP,alphaLP,alphaRP)",
+        "RooCruijff::sigResFail(x,meanF,sigmaLF,sigmaRF,alphaLF,alphaRF)",
+        "Exponential::bkgPass(x, expalphaP)",
+        "Exponential::bkgFail(x, expalphaF)",
+        ]
+
+    print "tnpWorkspace"
+    tnpWorkspace = []
+    tnpWorkspace.extend(tnpWorkspaceParam)
+    tnpWorkspace.extend(tnpWorkspaceFunc)
+
+    print "fitter" 
+    infile = rt.TFile( sample.histFile, "read")
+    hP = infile.Get('%s_Pass' % tnpBin['name'] )
+    hF = infile.Get('%s_Fail' % tnpBin['name'] )
+    fitter = tnpFitter( hP, hF, tnpBin['name'] )
+    infile.Close()
+
+    print "setup" 
+    ## setup
+    fitter.useMinos()  
+    rootfile = rt.TFile(sample.altSigFit,'update')
+    fitter.setOutputFile( rootfile )
+    
+    ## generated JPsi LineShape
+    #fileTruth  = rt.TFile(sample.mcRef.histFile,'read')  
+    #histZLineShapeP = fileTruth.Get('%s_Pass'%tnpBin['name'])
+    #histZLineShapeF = fileTruth.Get('%s_Fail'%tnpBin['name'])
+    #fitter.setZLineShapes(histZLineShapeP,histZLineShapeF)
+    #fileTruth.Close()
+
+    print "workspace"
+    ### set workspace
+    workspace = rt.vector("string")()
+    for iw in tnpWorkspace:
+        workspace.push_back(iw)
+    fitter.setWorkspaceJPsi( workspace )
+
+    title = tnpBin['title'].replace(';',' - ')
+    title = title.replace('probe_Ele_eta','#eta_{SC}')
+    title = title.replace('probe_Ele_pt','p_{T}')
+    fitter.fits(sample.mcTruth,title)
+
+    rootfile.Close()
+
 
 #############################################################
 ########## alternate background fitter
@@ -240,3 +337,49 @@ def histFitterAltBkg( sample, tnpBin, tnpWorkspaceParam ):
     rootfile.Close()
 
 
+#############################################################
+########## alternate background fitter
+#############################################################
+def histFitterAltBkgJPsi( sample, tnpBin, tnpWorkspaceParam ):
+        
+    tnpWorkspaceFunc = [
+        "Gaussian::sigResPass(x,meanP,sigmaP)",
+        "Gaussian::sigResFail(x,meanF,sigmaF)",
+        "Polynomial::bkgPass(x, cP)",
+        "Polynomial::bkgFail(x, cF)",
+        ]
+
+    tnpWorkspace = []
+    tnpWorkspace.extend(tnpWorkspaceParam)
+    tnpWorkspace.extend(tnpWorkspaceFunc)
+    
+    ## init fitter
+    infile = rt.TFile( sample.histFile, "read")
+    hP = infile.Get('%s_Pass' % tnpBin['name'] )
+    hF = infile.Get('%s_Fail' % tnpBin['name'] )
+    fitter = tnpFitter( hP, hF, tnpBin['name'] )
+    infile.Close()
+
+    ## setup
+    fitter.useMinos()
+    rootfile = rt.TFile(sample.altBkgFit,'update')
+    fitter.setOutputFile( rootfile )
+    
+    ## generated JPsi LineShape
+    fileTruth  = rt.TFile(sample.mcRef.histFile,'read')
+    histZLineShapeP = fileTruth.Get('%s_Pass'%tnpBin['name'])
+    histZLineShapeF = fileTruth.Get('%s_Fail'%tnpBin['name'])
+    fitter.setZLineShapes(histZLineShapeP,histZLineShapeF)
+    fileTruth.Close()
+
+    ### set workspace
+    workspace = rt.vector("string")()
+    for iw in tnpWorkspace:
+        workspace.push_back(iw)
+    fitter.setWorkspace( workspace )
+
+    title = tnpBin['title'].replace(';',' - ')
+    title = title.replace('probe_Ele_eta','#eta_{SC}')
+    title = title.replace('probe_Ele_pt','p_{T}')
+    fitter.fits(sample.mcTruth,title)
+    rootfile.Close()
