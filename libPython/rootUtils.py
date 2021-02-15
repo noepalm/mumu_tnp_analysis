@@ -10,8 +10,8 @@ def histPlotter( filename, tnpBin, plotDir ):
     rootfile = rt.TFile(filename,"read")
 
     c = rootfile.Get( '%s_Canv' % tnpBin['name'] )
-    c.Print( '%s/%s.png' % (plotDir,tnpBin['name']))
-    c.Print( '%s/%s.root' % (plotDir,tnpBin['name']))
+    c.Print( '%s/%s.png' % (plotDir,tnpBin['name']) )
+#    c.Print( '%s/%s.root' % (plotDir,tnpBin['name']) )
 
 
 def computeEffi( n1,n2,e1,e2):

@@ -22,7 +22,6 @@ parser.add_argument('--iBin'       , dest = 'binNumber'   , type = int,  default
 parser.add_argument('--flag'       , default = None       , help ='WP to test')
 parser.add_argument('settings'     , default = None       , help = 'setting file [mandatory]')
 
-
 args = parser.parse_args()
 
 print '===> settings %s <===' % args.settings
@@ -87,7 +86,6 @@ for s in tnpConf.samplesDef.keys():
     setattr( sample, 'tree'     ,'%s/fitter_tree' % tnpConf.tnpTreeDir )
     setattr( sample, 'histFile' , '%s/%s_%s.root' % ( outputDirectory , sample.name, args.flag ) )
 
-
 if args.createHists:
 
     import libPython.histUtils as tnpHist
@@ -98,9 +96,11 @@ if args.createHists:
         if sampleType == args.sample or args.sample == 'all' :
             print 'creating histogram for sample '
             sample.dump()
-            var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.5, 'max': 3.5 }
+            var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.3, 'max': 3.6 }
+            #var = { 'name' : 'pair_mass', 'nbins' : 18, 'min' : 2.6, 'max': 3.5 }
             if sample.mcTruth:
-                var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.5, 'max': 3.5 }
+                var = { 'name' : 'pair_mass', 'nbins' : 26, 'min' : 2.3, 'max': 3.6 }
+                #var = { 'name' : 'pair_mass', 'nbins' : 18, 'min' : 2.6, 'max': 3.5 }
             tnpHist.makePassFailHistograms( sample, tnpConf.flags[args.flag], tnpBins, var )
 
     sys.exit(0)
@@ -119,6 +119,7 @@ sampleMC = tnpConf.samplesDef['mcNom']
 if sampleMC is None:
     print '[tnpEGM_fitter, prelim checks]: MC sample not available... check your settings'
     sys.exit(1)
+
 for s in tnpConf.samplesDef.keys():
     sample =  tnpConf.samplesDef[s]
     if sample is None: continue
@@ -126,7 +127,6 @@ for s in tnpConf.samplesDef.keys():
     setattr( sample, 'nominalFit', '%s/%s_%s.nominalFit.root' % ( outputDirectory , sample.name, args.flag ) )
     setattr( sample, 'altSigFit' , '%s/%s_%s.altSigFit.root'  % ( outputDirectory , sample.name, args.flag ) )
     setattr( sample, 'altBkgFit' , '%s/%s_%s.altBkgFit.root'  % ( outputDirectory , sample.name, args.flag ) )
-
 
 
 ### change the sample to fit is mc fit
@@ -143,6 +143,7 @@ if  args.doFit:
                 tnpRoot.histFitterAltBkgJPsi( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParAltBkgFitJPsi )
             else:
                 tnpRoot.histFitterNominalJPsi( sampleToFit, tnpBins['bins'][ib], tnpConf.tnpParNomFitJPsi )
+                print 'tnpRoot.histFitterNominalJPsi'
 
     args.doPlot = True
      
