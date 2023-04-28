@@ -1,1 +1,10 @@
+.gitignore
 *.pyc
+*.root
+results/
+*.so
+*.o
+*.d
+*.pcm
+*_dictUmbrella.h
+*_dictContent.h
