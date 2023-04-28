@@ -336,7 +336,7 @@ def histFitterAltSigJPsi( sample, tnpBin, tnpWorkspaceParam ):
 def histFitterAltBkgJPsi( sample, tnpBin, tnpWorkspaceParam ):
          
     tnpWorkspaceFunc = [
-        "Gaussian::sigResPass(x,mean,PsigmaP)",
+        "Gaussian::sigResPass(x,meanP,sigmaP)",
         "Gaussian::sigResFail(x,meanF,sigmaF)",
         "Polynomial::bkgPass(x, cP)",
         "Polynomial::bkgFail(x, cF)",

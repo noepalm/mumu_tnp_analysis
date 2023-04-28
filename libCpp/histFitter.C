@@ -61,7 +61,7 @@ tnpFitter::tnpFitter(TFile *filein, std::string histname   ) : _useMinos(false),
   for( int ib = 0; ib <= hPass->GetXaxis()->GetNbins()+1; ib++ )
     // chiara, for JPsi
     //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
-    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.3 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.6 ) {
+    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.6 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
     //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.6 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
      hPass->SetBinContent(ib,0);
      hFail->SetBinContent(ib,0);
@@ -70,7 +70,7 @@ tnpFitter::tnpFitter(TFile *filein, std::string histname   ) : _useMinos(false),
   _work = new RooWorkspace("w") ;
   // chiara, for JPsi 
   // _work->factory("x[50,130]");
-  _work->factory("x[2.3,3.6]");
+  _work->factory("x[2.6,3.5]");
   //_work->factory("x[2.6,3.5]");
 
   RooDataHist rooPass("hPass","hPass",*_work->var("x"),hPass);
@@ -80,8 +80,8 @@ tnpFitter::tnpFitter(TFile *filein, std::string histname   ) : _useMinos(false),
   // chiara, for JPsi 
   //_xFitMin = 60;
   //_xFitMax = 120;
-  _xFitMin = 2.3;
-  _xFitMax = 3.6;
+  _xFitMin = 2.6;
+  _xFitMax = 3.5;
   //_xFitMin = 2.6;
   //_xFitMax = 3.5;
 }
@@ -92,10 +92,11 @@ tnpFitter::tnpFitter(TH1 *hPass, TH1 *hFail, std::string histname  ) : _useMinos
   
   _nTotP = hPass->Integral();
   _nTotF = hFail->Integral();
+
   for( int ib = 0; ib <= hPass->GetXaxis()->GetNbins()+1; ib++ )
     // chiara, for JPsi 
     //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 60 || hPass->GetXaxis()->GetBinCenter(ib) >= 120 ) {
-    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.3 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.6 ) {
+    if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.6 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
       //if(  hPass->GetXaxis()->GetBinCenter(ib) <= 2.6 || hPass->GetXaxis()->GetBinCenter(ib) >= 3.5 ) {
       hPass->SetBinContent(ib,0);
       hFail->SetBinContent(ib,0);
@@ -104,7 +105,7 @@ tnpFitter::tnpFitter(TH1 *hPass, TH1 *hFail, std::string histname  ) : _useMinos
   _work = new RooWorkspace("w") ;
   // chiara, for JPsi  
   // _work->factory("x[50,130]");
-  _work->factory("x[2.3,3.6]");
+  _work->factory("x[2.6,3.5]");
   //_work->factory("x[2.6,3.5]");
   
   RooDataHist rooPass("hPass","hPass",*_work->var("x"),hPass);
@@ -114,8 +115,8 @@ tnpFitter::tnpFitter(TH1 *hPass, TH1 *hFail, std::string histname  ) : _useMinos
   // chiara, for JPsi   
   //_xFitMin = 60;
   //_xFitMax = 120;
-  _xFitMin = 2.3;
-  _xFitMax = 3.6;
+  _xFitMin = 2.6;
+  _xFitMax = 3.5;
   //_xFitMin = 2.6;
   //_xFitMax = 3.5;
 }
@@ -151,14 +152,21 @@ void tnpFitter::setWorkspaceJPsi(std::vector<std::string> workspace) {
     _work->factory(workspace[icom].c_str());
   }
   
+  // _work->factory(TString::Format("nSigP[%f,1e-8,%f]",TMath::Max(_nTotP*0.9, 2e-8), TMath::Max(_nTotP*1.5, 1.))); //min was 0.5
+  // _work->factory(TString::Format("nBkgP[%f,1e-8,%f]",TMath::Max(_nTotP*0.1, 2e-8), TMath::Max(_nTotP*1.5, 1.))); //min was 0.5
+  // _work->factory(TString::Format("nSigF[%f,1e-8,%f]",TMath::Max(_nTotF*0.9, 2e-8), TMath::Max(_nTotF*1.5, 1.))); //min was 0.1
+  // //_work->factory(TString::Format("nSigF[%f,0.5,%f]",_nTotF*0.9,_nTotF*1.5));
+  // _work->factory(TString::Format("nBkgF[%f,1e-8,%f]",TMath::Max(_nTotF*0.1, 2e-8), TMath::Max(_nTotF*1.5, 1.))); //min was 0.5
+
   _work->factory(TString::Format("nSigP[%f,0.5,%f]",_nTotP*0.9,_nTotP*1.5));
   _work->factory(TString::Format("nBkgP[%f,0.5,%f]",_nTotP*0.1,_nTotP*1.5));
   _work->factory(TString::Format("nSigF[%f,0.1,%f]",_nTotF*0.9,_nTotF*1.5));
-  //_work->factory(TString::Format("nSigF[%f,0.5,%f]",_nTotF*0.9,_nTotF*1.5));
   _work->factory(TString::Format("nBkgF[%f,0.5,%f]",_nTotF*0.1,_nTotF*1.5));
+
   _work->factory("SUM::pdfPass(nSigP*sigResPass,nBkgP*bkgPass)");
   _work->factory("SUM::pdfFail(nSigF*sigResFail,nBkgF*bkgFail)");
-  _work->Print();			         
+  _work->Print();
+
 }
 
 
@@ -225,8 +233,8 @@ void tnpFitter::fits(bool mcTruth,string title) {
     // chiara, for JPsi
   //RooPlot *pPass = _work->var("x")->frame(60,120);
   //RooPlot *pFail = _work->var("x")->frame(60,120);
-  RooPlot *pPass = _work->var("x")->frame(2.3,3.6);
-  RooPlot *pFail = _work->var("x")->frame(2.3,3.6);
+  RooPlot *pPass = _work->var("x")->frame(2.6,3.5);
+  RooPlot *pFail = _work->var("x")->frame(2.6,3.5);
   //RooPlot *pPass = _work->var("x")->frame(2.6,3.5);
   //RooPlot *pFail = _work->var("x")->frame(2.6,3.5);
   pPass->SetTitle("passing probe");
@@ -295,7 +303,7 @@ void tnpFitter::textParForCanvas(RooFitResult *resP, RooFitResult *resF,TPad *p)
   text->SetFillColor(0);
   text->SetBorderSize(0);
   text->SetTextAlign(12);
-  text->AddText("    --- parmeters " );
+  text->AddText("    --- parameters " );
   RooArgList listParFinalP = resP->floatParsFinal();
   for( int ip = 0; ip < listParFinalP.getSize(); ip++ ) {
     TString vName = listParFinalP[ip].GetName();
@@ -318,4 +326,5 @@ void tnpFitter::textParForCanvas(RooFitResult *resP, RooFitResult *resF,TPad *p)
   p->cd();
   text1->Draw();
   text->Draw();
+
 }

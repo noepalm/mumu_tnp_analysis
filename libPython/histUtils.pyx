@@ -1,3 +1,5 @@
+# -*- mode: python -*-
+
 include "ROOT.pxi"
 import math
 #from fitUtils import *
@@ -113,13 +115,15 @@ def makePassFailHistograms( sample, flag, bindef, var ):
     ######################################
 
     # Find out with variables are used to activate the corresponding branches
-    replace_patterns = ['&', '|', '-', 'cos(', 'sqrt(', 'fabs(', 'abs(', '(', ')', '>', '<', '=', '!', '*', '/']
-    branches = " ".join(cutBinList) + " pair_mass " + flag
+    replace_patterns = ['&', '|', '+', '-', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
+    branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
     for p in replace_patterns:
         branches = branches.replace(p, ' ')
 
     # Note: with str.encode we convert a string to bytes, which is needed for C++ functions
     branches = set([str.encode(x) for x in branches.split(" ") if x != '' and not is_number(x)])
+
+    print branches
 
     # Activate only branches which matter for the tag selection
     tree.SetBranchStatus("*", 0)
@@ -128,7 +132,7 @@ def makePassFailHistograms( sample, flag, bindef, var ):
         tree.SetBranchStatus(br, 1)
 
     # Set adress of pair mass
-    tree.SetBranchAddress("pair_mass", <void*>&pair_mass)
+    tree.SetBranchAddress("Jpsi_fit_mass", <void*>&pair_mass)
 
     ################
     # Loop over Tree
@@ -137,7 +141,7 @@ def makePassFailHistograms( sample, flag, bindef, var ):
     nevts = tree.GetEntries()
     frac_of_nevts = nevts/20
 
-    print("Starting event loop to fill histograms..")
+    print("Starting event loop to fill histograms...")
 
     for index in range(nevts):
         if index % frac_of_nevts == 0:

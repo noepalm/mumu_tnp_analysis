@@ -119,7 +119,7 @@ def EffiGraph1D(effDataList, effMCList, sfList ,nameout, xAxis = 'pT', yAxis = '
         #xMin = 10
         #xMax = 500
         xMin = 0.5
-        xMax = 20.
+        xMax = 40.
     elif 'vtx' in xAxis or 'Vtx' in xAxis or 'PV' in xAxis:
         xMin =  3
         xMax = 42
@@ -159,19 +159,19 @@ def EffiGraph1D(effDataList, effMCList, sfList ,nameout, xAxis = 'pT', yAxis = '
         
         #grBinsEffData.GetHistogram().SetMinimum(effiMin)
         #grBinsEffData.GetHistogram().SetMaximum(effiMax)
-        grBinsEffData.GetHistogram().SetMinimum(0.)
-        grBinsEffData.GetHistogram().SetMaximum(1.2)
+        grBinsEffData.GetHistogram().SetMinimum(.6) #0 before
+        grBinsEffData.GetHistogram().SetMaximum(1.1) #1.2 before
 
         grBinsEffData.GetHistogram().GetXaxis().SetLimits(xMin,xMax)
         grBinsSF.GetHistogram()     .GetXaxis().SetLimits(xMin,xMax)
         #grBinsSF.GetHistogram().SetMinimum(sfMin)
         #grBinsSF.GetHistogram().SetMaximum(sfMax)
-        grBinsSF.GetHistogram().SetMinimum(0)
-        grBinsSF.GetHistogram().SetMaximum(1.5)
+        grBinsSF.GetHistogram().SetMinimum(.6) #0 before
+        grBinsSF.GetHistogram().SetMaximum(1.1) #1.5 before
         
         grBinsSF.GetHistogram().GetXaxis().SetTitleOffset(1)
         if 'eta' in xAxis or 'Eta' in xAxis:
-            grBinsSF.GetHistogram().GetXaxis().SetTitle("SuperCluster #eta")
+            grBinsSF.GetHistogram().GetXaxis().SetTitle("#eta")
         elif 'pt' in xAxis or 'pT' in xAxis:
             grBinsSF.GetHistogram().GetXaxis().SetTitle("p_{T}  [GeV]")  
         elif 'vtx' in xAxis or 'Vtx' in xAxis or 'PV' in xAxis:

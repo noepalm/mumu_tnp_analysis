@@ -114,16 +114,16 @@ def makeTGraphFromList( listOfEfficiencies , keyMin, keyMax ):
     
     ip = 0
     for point in listOfEfficiencies:
-        print "chiara"
-        print ip 
-        print point[keyMin]
-        print point[keyMax]
-        print "chiara"
+        # print "chiara"
+        # print ip 
+        # print point[keyMin]
+        # print point[keyMax]
+        # print "chiara"
         grOut.SetPoint(     ip, (point[keyMin]+point[keyMax])/2. , point['val'] )
         grOut.SetPointError(ip, (point[keyMax]-point[keyMin])/2. , point['err'] )
         ip = ip + 1
 
-#        print "###########################"
+#    print "###########################"
 #        print listOfEff
     #    grOut.Print()
     return grOut
@@ -235,6 +235,7 @@ class efficiencyList:
         ### first define bining
         xbins = []
         ybins = []
+
         for ptBin in self.effList.keys():
             if not ptBin[0] in ybins:
                 ybins.append(ptBin[0])                
@@ -258,7 +259,7 @@ class efficiencyList:
         if onlyError >= 0:
             htitle = 'e/#gamma uncertainties'
             hname  = 'h2_uncertaintiesEGamma'             
-
+            
         h2 = rt.TH2F(hname,htitle,xbinsTab.size-1,xbinsTab,ybinsTab.size-1,ybinsTab)
 
         ## init histogram efficiencies and errors to 100%
@@ -315,7 +316,7 @@ class efficiencyList:
                                 denominator = self.effList[ptBin][etaBin].systCombined
                             h2.SetBinContent(ix,iy, abs(self.effList[ptBin][etaBin].syst[onlyError-1]) / denominator )
 
-        h2.GetXaxis().SetTitle("SuperCluster #eta")
+        h2.GetXaxis().SetTitle("#eta")
         h2.GetYaxis().SetTitle("p_{T} [GeV]")
         return h2
         
@@ -325,7 +326,6 @@ class efficiencyList:
         self.combineSyst()
         listOfGraphs = {}
 
-        
         for ptBin in self.effList.keys():
             for etaBin in self.effList[ptBin].keys():
                 if etaBin[0] >= 0 and etaBin[1] > 0:
@@ -354,7 +354,7 @@ class efficiencyList:
                         anError = effAverage.systCombined / effAverage.effMC  
                     listOfGraphs[etaBin].append( {'min': ptBin[0], 'max': ptBin[1],
                                                   'val': aValue  , 'err': anError } ) 
-                                                  
+
         return listOfGraphs
 
     def pt_1DGraph_list_customEtaBining(self, etaBining, doScaleFactor):

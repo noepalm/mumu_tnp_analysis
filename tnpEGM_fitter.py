@@ -83,7 +83,7 @@ tnpBins = pickle.load( open( '%s/bining.pkl'%(outputDirectory),'rb') )
 for s in tnpConf.samplesDef.keys():
     sample =  tnpConf.samplesDef[s]
     if sample is None: continue
-    setattr( sample, 'tree'     ,'%s/fitter_tree' % tnpConf.tnpTreeDir )
+    setattr( sample, 'tree'     ,'%s/tree' % tnpConf.tnpTreeDir )
     setattr( sample, 'histFile' , '%s/%s_%s.root' % ( outputDirectory , sample.name, args.flag ) )
 
 if args.createHists:
@@ -116,9 +116,9 @@ if sampleToFit is None:
 
 sampleMC = tnpConf.samplesDef['mcNom']
 
-if sampleMC is None:
-    print '[tnpEGM_fitter, prelim checks]: MC sample not available... check your settings'
-    sys.exit(1)
+# if sampleMC is None:
+#     print '[tnpEGM_fitter, prelim checks]: MC sample not available... check your settings'
+#     sys.exit(1)
 
 for s in tnpConf.samplesDef.keys():
     sample =  tnpConf.samplesDef[s]
@@ -180,12 +180,13 @@ if args.sumUp:
     sampleToFit.dump()
     info = {
         'data'        : sampleToFit.histFile,
-        ###'dataNominal' : sampleToFit.nominalFit,
-        'dataNominal' : sampleToFit.altSigFit,
-        ###'dataAltSig'  : sampleToFit.altSigFit,
-        'dataAltSig'  : sampleToFit.nominalFit,  
+        'dataNominal' : sampleToFit.nominalFit,
+        # 'dataNominal' : sampleToFit.altSigFit,
+        'dataAltSig'  : sampleToFit.altSigFit,
+        # 'dataAltSig'  : sampleToFit.nominalFit,  
         'dataAltBkg'  : sampleToFit.altBkgFit ,
-        'mcNominal'   : sampleToFit.mcRef.histFile,
+        # 'mcNominal'   : sampleToFit.mcRef.histFile,
+        'mcNominal'   : None,
         'mcAlt'       : None,
         'tagSel'      : None
         }
@@ -200,6 +201,7 @@ if args.sumUp:
     fOut = open( effFileName,'w')
     
     for ib in range(len(tnpBins['bins'])):
+
         effis = tnpRoot.getAllEffi( info, tnpBins['bins'][ib] )
 
         ### formatting assuming 2D bining -- to be fixed        

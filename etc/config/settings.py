@@ -2,15 +2,16 @@
 # General settings
 
 # flag to be Tested
-idbdtlppassEB = '(probeIsLowPt==1) && probeAbsEta<1.5 && (probeMvaId > %f )' % 1.5
-idbdtlppassEE = '(probeIsLowPt==1) && probeAbsEta>1.5 && (probeMvaId > %f )' % 1.5
+DoubleMu = 'DoubleMu_fired == 1'					# trigger fired
+DoubleMu += ' && Jpsi_m1_Dimu_pt != Jpsi_m2_Dimu_pt'			# NOT (same HLT object matched to both offline muons)
+DoubleMu += ' && Jpsi_m1_Dimu_dR < 0.1 && Jpsi_m2_Dimu_dR < 0.1'	# both HLT candidates matched to an offline muon
+
 
 # flag to be Tested
 flags = {
-    'passingIdLPEB'  : idbdtlppassEB,
-    'passingIdLPEE'  : idbdtlppassEE,
+    'DoubleMu' : DoubleMu
     }
-baseOutDir = 'results/test/'
+baseOutDir = 'results/muons/'
 
 #############################################################
 # Samples definition  - preparing the samples
@@ -18,20 +19,23 @@ baseOutDir = 'results/test/'
 ### samples are defined in etc/inputs/tnpSampleDef.py
 ### not: you can setup another sampleDef File in inputs
 import etc.inputs.tnpSampleDef as tnpSamples
-tnpTreeDir = 'tnpAna'
+tnpTreeDir = 'nano_'
 
 samplesDef = {
-    'data'   : tnpSamples.Parking_Jan16['data_Run2018ALL'].clone(),
-    'mcNom'  : tnpSamples.Parking_Jan16['BuToKJpsi'].clone(),
-    'mcAlt'  : tnpSamples.Parking_Jan16['BuToKJpsi'].clone(),
-    'tagSel' : tnpSamples.Parking_Jan16['BuToKJpsi'].clone(),
+    'data'   : tnpSamples.Parking_X['data'].clone(),
+    'mcNom'  : None,
+    'mcAlt'  : None,
+    'tagSel' : None
+    # 'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
+    # 'mcAlt'  : tnpSamples.Parking_X['MC'].clone(),
+    # 'tagSel' : tnpSamples.Parking_X['MC'].clone(),
 }
 
 ## if you need to use 2 times the same sample, then rename the second one
 if not samplesDef['mcAlt'] is None:
-    samplesDef['mcAlt'].rename('BuToKJpsi_mcAlt')
+    samplesDef['mcAlt'].rename('mcAlt')
 if not samplesDef['tagSel'] is None:
-    samplesDef['tagSel'].rename('BuToKJpsi_tagSel')
+    samplesDef['tagSel'].rename('tagSel')
 
 ## set MC weight
 weightName = 'weight'    # 1 for data; pu_weight for MC   
@@ -42,20 +46,21 @@ if not samplesDef['tagSel'] is None: samplesDef['tagSel'].set_weight(weightName)
 #############################################################
 # Bining definition  [can be nD bining]
 biningDef = [
-    # EB
-    #{ 'var' : 'probeAbsEta' , 'type': 'float', 'bins': [0, 1.5] },
-    #{ 'var' : 'probePt' , 'type': 'float', 'bins': [0.5,1.5,2.0,5.0,20.0] },
-    # EE
-    { 'var' : 'probeAbsEta' , 'type': 'float', 'bins': [1.5, 2.5] },
-    { 'var' : 'probePt' , 'type': 'float', 'bins': [0.5,2.0,5.0,20.0] },
+    { 'var' : 'abs(Jpsi_m2_eta)', 'type' : 'float' , 'bins' : [0, 1.5, 2.6]},
+    { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3., 3.1, 3.2, 3.5, 4., 6., 7., 8., 9., 10., 12., 40]}, #skipped 2.5, 2.7
 ]
 
 #############################################################
 # Cuts definition for all samples
-# EB
-#cutBase = 'probePt>0.5 && probePt<20 && probeIsLowPt==1 && hlt_9 && probeAbsEta<1.5'
-# EE
-cutBase = 'probePt>0.5 && probePt<20 && probeIsLowPt==1 && hlt_9 && probeAbsEta>1.5'
+
+cutBase = ''
+## turn-on cuts
+cutBase += 'Jpsi_m1_pt > 2.8 && Jpsi_m2_pt > 2.8'
+cutBase += ' && abs(Jpsi_m1_eta) < 2.5 && abs(Jpsi_m2_eta) < 2.5'
+cutBase += ' && Jpsi_fit_pt > 4.9'
+## sanity cuts
+cutBase += ' && Jpsi_m1_trgobj_pt != Jpsi_m2_trgobj_pt'
+
 
 # can add addtionnal cuts for some bins (first check bin number using tnpEGM --checkBins)
 #additionalCuts = { 
@@ -75,42 +80,6 @@ tnpParAltSigFitJPsi = [
     ]
 
 tnpParNomFitJPsi = [
-
-    # EB with pT 0.5-1.5 
-    # with fix sigmaF, meanF, alphaLF, alphaRF, nLF, nRF to those for passing
-    # 26 bin, 2.3-3.6
-    #"meanP[3.0969, 3.095, 3.098]","sigmaP[0.05, 0.03, 0.1]","alphaLP[0.6, 0.2, 0.7]","alphaRP[1.2, 1.0, 1.5]","nLP[3.6, 3.56, 3.64]","nRP[1.85, 1.80, 1.95]",
-    #"meanF[3.0969, 3.09, 3.10]","sigmaF[0.05, 0.03, 0.1]","alphaLF[0.6, 0.2, 0.7]","alphaRF[1.2, 0.8, 1.5]","nLF[3.6, 3.56, 3.64]","nRF[1.85, 1.80, 1.95]",
-    #"expalphaP[0.5, 0.2, 0.8]",
-    #"expalphaF[0.5, 0.2, 0.8]",   
-
-    # EB with pT 1.5-2 
-    # with fix sigmaF=sigmaP  
-    # 26 bin, 2.3-3.6  
-    #"meanP[3.0969, 3.08, 3.10]","sigmaP[0.05, 0.03, 0.1]","alphaLP[0.6, 0.2, 0.7]","alphaRP[1.2, 1.0, 1.5]","nLP[3.6, 3.56, 3.64]","nRP[1.85, 1.80, 1.95]",
-    #"meanF[3.0969, 3.09, 3.10]","sigmaF[0.05, 0.03, 0.1]","alphaLF[0.6, 0.2, 0.7]","alphaRF[1.2, 1.0, 1.5]","nLF[3.6, 3.56, 3.64]","nRF[1.85, 1.80, 1.95]",
-    #"expalphaP[0.5, -0.2, 0.8]",
-    #"expalphaF[0.5, 0.2, 0.8]",   
-
-    # EB with pT 2-5 and pT>5
-    # with fix sigmaF, alphaLF, alphaRF, nLF, nRF to those for passing. NB: meanF free
-    # 18 bin, 2.6-3.5   
-    #"meanP[3.09, 3.085, 3.095]","sigmaP[0.05, 0.03, 0.1]",  "alphaLP[0.6, 0.2, 0.7]","alphaRP[1.2, 1.0, 1.5]","nLP[3.6, 3.56, 3.64]","nRP[1.80, 1.70, 1.95]",
-    #"meanF[3.082, 3.070, 3.085]","sigmaF[0.01, 0.001, 0.03]","alphaLF[0.6, 0.2, 0.7]","alphaRF[1.2, 1.0, 1.5]","nLF[3.6, 3.56, 3.64]","nRF[1.85, 1.80, 1.95]",
-    #"expalphaP[-0.75, -1., -0.5]",
-    #"expalphaF[0., -0.5, 0.2]",       
-
-    # EE with pT<5
-    # with fix sigmaF, meanF, alphaLF, alphaRF, nLF, nRF to those for passing
-    # 26 bin, 2.3-3.6
-    #"meanP[3.0969, 3.095, 3.1]","sigmaP[0.05, 0.03, 0.12]","alphaLP[0.6, 0.2, 0.7]","alphaRP[0.75, 0.4, 1.]","nLP[3.4, 3.3, 3.60]","nRP[1.85, 1.80, 1.95]",
-    #"meanF[3.0969, 3.095, 3.098]","sigmaF[0.05, 0.03, 0.1]","alphaLF[0.6, 0.2, 0.7]","alphaRF[1.2, 1.0, 1.5]","nLF[3.6, 3.56, 3.64]","nRF[1.85, 1.80, 1.95]",
-    #"expalphaP[0.6, 0.5, 1.]",
-    #"expalphaF[0., -0.2, 0.8]",   
-    
-    # EE with pT>5 
-    # with fix sigmaF, meanF, alphaLF, alphaRF, nLF, nRF to those for passing
-    # 26 bin, 2.3-3.6
     "meanP[3.0969, 3.09, 3.11]","sigmaP[0.05, 0.03, 0.2]",  "alphaLP[0.6, 0.2, 0.95]","alphaRP[1.2, 0.5, 1.5]","nLP[3.6, 3.56, 3.64]","nRP[1.85, 1.80, 1.95]",
     "meanF[3.0969, 3.09, 3.11]","sigmaF[0.01, 0.001, 0.03]","alphaLF[0.6, 0.2, 0.7]","alphaRF[1.2, 1.0, 1.5]","nLF[3.6, 3.56, 3.64]","nRF[1.85, 1.80, 1.95]",
     "expalphaP[0., -0.1, 0.8]",
