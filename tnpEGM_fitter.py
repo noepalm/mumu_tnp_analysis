@@ -204,7 +204,8 @@ if args.sumUp:
 
         effis = tnpRoot.getAllEffi( info, tnpBins['bins'][ib] )
 
-        ### formatting assuming 2D bining -- to be fixed        
+        ### formatting assuming 2D bining -- to be fixed
+        print tnpBins['bins'][ib]['title']
         v1Range = tnpBins['bins'][ib]['title'].split(';')[1].split('<')
         v2Range = tnpBins['bins'][ib]['title'].split(';')[2].split('<')
         if ib == 0 :
@@ -215,13 +216,13 @@ if args.sumUp:
             print astr
             fOut.write( astr + '\n' )
             
-        astr =  '%+8.3f\t%+8.3f\t%+8.3f\t%+8.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f' % (
+        astr =  '%+8.3f\t%+8.3f\t%+8.3f\t%+8.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f\t%5.3f' % (
             float(v1Range[0]), float(v1Range[2]),
             float(v2Range[0]), float(v2Range[2]),
             effis['dataNominal'][0],effis['dataNominal'][1],
             effis['mcNominal'  ][0],effis['mcNominal'  ][1],
-            effis['dataAltBkg' ][0],
-            effis['dataAltSig' ][0],
+            effis['dataAltBkg' ][0],effis['dataAltBkg'][1],
+            effis['dataAltSig' ][0],effis['dataAltSig'][1],
             effis['mcAlt' ][0],
             effis['tagSel'][0],
             )

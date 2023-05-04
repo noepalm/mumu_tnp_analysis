@@ -19,7 +19,7 @@ def createBins( bining, cut ):
             print 'bining is not complete for var %s' % var
             return listOfIndex
         nb1D = 1
-        if   bining[iv]['type'] == 'float' :
+        if   bining[iv]['type'] == 'float':
             nb1D = len(bining[iv]['bins'])-1
         elif bining[iv]['type'] == 'int' :
             nb1D = len(bining[iv]['bins'])
@@ -56,7 +56,7 @@ def createBins( bining, cut ):
             var     = bining[iv]['var']
             bins1D  = bining[iv]['bins']
             varType = bining[iv]['type']
-            if varType == 'float' :
+            if varType == 'float':
                 if binCut is None: 
                     binCut   = '%s >= %f && %s < %f' % (var,bins1D[ix[iv]],var,bins1D[ix[iv]+1])
                     binTitle = '%1.3f < %s < %1.3f'  % (bins1D[ix[iv]],var,bins1D[ix[iv]+1])

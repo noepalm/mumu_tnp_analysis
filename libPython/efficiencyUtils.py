@@ -175,7 +175,6 @@ class efficiencyList:
 #                        self.effList[ptBin][etaBinPlus ].combineSyst(effPlus.effData,effPlus.effMC)
                         #print 'syst 1 [-] (etaBin: %1.3f,%1.3f) ; (ptBin: %3.0f,%3.0f): %f '% (etaBin[0],etaBin[1],ptBin[0],ptBin[1],self.effList[ptBin][etaBinMinus].syst[1])
                         #print 'syst 1 [+] (etaBin: %1.3f,%1.3f) ; (ptBin: %3.0f,%3.0f): %f '% (etaBin[0],etaBin[1],ptBin[0],ptBin[1],self.effList[ptBin][etaBinPlus] .syst[1])
-                        
 
                         
     def symmetrizeSystVsEta(self):
@@ -235,10 +234,10 @@ class efficiencyList:
         ### first define bining
         xbins = []
         ybins = []
-
+        
         for ptBin in self.effList.keys():
             if not ptBin[0] in ybins:
-                ybins.append(ptBin[0])                
+                ybins.append(ptBin[0])
             if not ptBin[1] in ybins:
                 ybins.append(ptBin[1])
 
@@ -250,6 +249,7 @@ class efficiencyList:
 
         xbins.sort()
         ybins.sort()
+
         ## transform to numpy array for ROOT
         xbinsTab = np.array(xbins)
         ybinsTab = np.array(ybins)
@@ -259,7 +259,7 @@ class efficiencyList:
         if onlyError >= 0:
             htitle = 'e/#gamma uncertainties'
             hname  = 'h2_uncertaintiesEGamma'             
-            
+        
         h2 = rt.TH2F(hname,htitle,xbinsTab.size-1,xbinsTab,ybinsTab.size-1,ybinsTab)
 
         ## init histogram efficiencies and errors to 100%

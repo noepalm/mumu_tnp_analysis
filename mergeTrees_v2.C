@@ -44,6 +44,8 @@
 	TTree* mytree = TTree::MergeTrees(lis);
     mytree->SetName("tree");
     mytree->Write();
+
+	ft->Close();
  
 }
 

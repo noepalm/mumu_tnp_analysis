@@ -24,9 +24,6 @@ Parking_Jan16 = {
 
 
 Parking_X = {
-    # 'data' : tnpSample('data', "/eos/cms/store/user/crovelli/HLT_DoubleMu/DoubleMuTnP_2022D_LowMass0.root"),
-    # 'MC' : tnpSample('MC', "/eos/cms/store/user/crovelli/HLT_DoubleMu/DoubleMuTnP_2022D_LowMass0.root"),
-    
     'data' : tnpSample('data', "DoubleMuTnP_v2.root"),
     'MC' : tnpSample('MC', "DoubleMuTnP_v2.root", isMC = True, nEvts = -1)
 }

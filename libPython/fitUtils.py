@@ -312,17 +312,17 @@ def histFitterAltSigJPsi( sample, tnpBin, tnpWorkspaceParam ):
     fitter.setOutputFile( rootfile )
     
     ## generated JPsi LineShape
-    fileTruth  = rt.TFile(sample.mcRef.histFile,'read')
-    histZLineShapeP = fileTruth.Get('%s_Pass'%tnpBin['name'])
-    histZLineShapeF = fileTruth.Get('%s_Fail'%tnpBin['name'])
-    fitter.setZLineShapes(histZLineShapeP,histZLineShapeF)
-    fileTruth.Close()
+    # fileTruth  = rt.TFile(sample.mcRef.histFile,'read')
+    # histZLineShapeP = fileTruth.Get('%s_Pass'%tnpBin['name'])
+    # histZLineShapeF = fileTruth.Get('%s_Fail'%tnpBin['name'])
+    # fitter.setZLineShapes(histZLineShapeP,histZLineShapeF)
+    # fileTruth.Close()
     
     ### set workspace
     workspace = rt.vector("string")()
     for iw in tnpWorkspace:
         workspace.push_back(iw)
-    fitter.setWorkspace( workspace )
+    fitter.setWorkspaceJPsi( workspace )
         
     title = tnpBin['title'].replace(';',' - ')
     title = title.replace('probe_Ele_eta','#eta_{SC}')
