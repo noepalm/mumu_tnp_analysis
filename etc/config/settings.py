@@ -23,7 +23,7 @@ tnpTreeDir = 'nano_'
 
 samplesDef = {
     'data'   : tnpSamples.Parking_X['data'].clone(),
-    'mcNom'  : tnpSamples.Parking_X['data'].clone(),
+    'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
     'mcAlt'  : None,
     'tagSel' : None
     # 'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
@@ -39,14 +39,15 @@ if not samplesDef['tagSel'] is None:
 
 ## set MC weight
 weightName = 'weight'    # 1 for data; pu_weight for MC   
-if not samplesDef['mcNom' ] is None: samplesDef['mcNom' ].set_weight(weightName)
-if not samplesDef['mcAlt' ] is None: samplesDef['mcAlt' ].set_weight(weightName)
-if not samplesDef['tagSel'] is None: samplesDef['tagSel'].set_weight(weightName)
+# if not samplesDef['mcNom' ] is None: samplesDef['mcNom' ].set_weight(weightName)
+# if not samplesDef['mcAlt' ] is None: samplesDef['mcAlt' ].set_weight(weightName)
+# if not samplesDef['tagSel'] is None: samplesDef['tagSel'].set_weight(weightName)
 
 #############################################################
 # Bining definition  [can be nD bining]
 biningDef = [
     { 'var' : 'abs(Jpsi_m2_eta)', 'type' : 'float' , 'bins' : [0, 1.5, 2.6]},
+    # { 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [0, 0.2, 0.4, 0.6, 1.]},
     # { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3., 3.1, 3.2, 3.5, 4., 6., 7., 8., 9., 10., 12., 40]},
     { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40]},
 ]
@@ -58,11 +59,13 @@ cutBase = ''
 ## turn-on cuts
 cutBase += 'Jpsi_m1_pt > 2.8 && Jpsi_m2_pt > 2.8'
 cutBase += ' && abs(Jpsi_m1_eta) < 2.5 && abs(Jpsi_m2_eta) < 2.5'
-cutBase += ' && Jpsi_fit_pt > 4.9'
+# cutBase += ' && Jpsi_fit_pt > 4.9'
+cutBase += ' && Jpsi_nonfit_pt > 4.9'
 ## mass cuts
-cutBase += ' && Jpsi_fit_mass > 2.6 && Jpsi_fit_mass < 3.5' 
+# cutBase += ' && Jpsi_fit_mass > 2.6 && Jpsi_fit_mass < 3.5' 
+cutBase += ' && Jpsi_nonfit_mass > 2.6 && Jpsi_nonfit_mass < 3.5' 
 ## sanity cuts
-cutBase += ' && Jpsi_m1_trgobj_pt != Jpsi_m2_trgobj_pt'
+# cutBase += ' && Jpsi_m1_trgobj_pt != Jpsi_m2_trgobj_pt'
 
 
 # can add addtionnal cuts for some bins (first check bin number using tnpEGM --checkBins)
@@ -76,8 +79,8 @@ additionalCuts = None
 #############################################################
 # Fitting params to tune fit by hand if necessary
 tnpParAltSigFitJPsi = [
-    "meanP[3.0969, 3.07, 3.2]","sigmaP[0.03, 0.01, 0.2]",
-    "meanF[3.0969, 3.07, 3.2]","sigmaF[0.03, 0.01, 0.2]",
+    "meanP[3.0969, 3.0, 3.4]","sigmaP[0.03, 0.01, 0.5]",
+    "meanF[3.0969, 3.0, 3.4]","sigmaF[0.03, 0.01, 0.5]", #sigmaF initial = 0.03, max 0.5, min 0.01
     "alphaP[-1, -10, 10]",
     "alphaF[-1, -10, 10]",    
     ]
@@ -89,8 +92,8 @@ tnpParNomFitJPsi = [
     # "expalphaF[0., -0.2, 0.8]", #-0.2 before
     "meanP[3.0969, 3.07, 3.11]","sigmaP[0.03, 0.01, 0.2]", "alphaLP[0.6, 0.05, 5.]","alphaRP[1.2, 0.1, 2.]","nLP[3.6, .01, 100.]","nRP[1.85, .010, 200.]",
     "meanF[3.0969, 3.07, 3.11]","sigmaF[0.03, 0.01, 0.1]","alphaLF[0.6, 0.05, 5.]","alphaRF[1.2, 0.1, 2.]","nLF[3.6, .01, 100.]","nRF[1.85, .001, 200.]",
-    "expalphaP[0., -50., .1]", #-0.1 before
-    "expalphaF[0., -50., .1]", #-0.2 before
+    "expalphaP[0., -50., .1]",
+    "expalphaF[0., -50., .1]",
     ]
      
 tnpParAltBkgFitJPsi = [

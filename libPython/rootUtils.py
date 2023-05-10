@@ -31,14 +31,36 @@ def getAllEffi( info, bindef ):
     effis = {}
     if not info['mcNominal'] is None and os.path.isfile(info['mcNominal']):
         rootfile = rt.TFile( info['mcNominal'], 'read' )
+        # hP = rootfile.Get('%s_Pass'%bindef['name'])
+        # hF = rootfile.Get('%s_Fail'%bindef['name'])
+        # bin1 = 1
+        # bin2 = hP.GetXaxis().GetNbins()
+        # eP = rt.Double(-1.0)
+        # eF = rt.Double(-1.0)
+        # nP = hP.IntegralAndError(bin1,bin2,eP)
+        # nF = hF.IntegralAndError(bin1,bin2,eF)
+
+        from ROOT import RooFit,RooFitResult
+        fitresP = rootfile.Get( '%s_resP' % bindef['name']  )
+        fitresF = rootfile.Get( '%s_resF' % bindef['name'] )
+
+        fitP = fitresP.floatParsFinal().find('nSigP')
+        fitF = fitresF.floatParsFinal().find('nSigF')
+        
+        nP = fitP.getVal()
+        nF = fitF.getVal()
+        eP = fitP.getError()
+        eF = fitF.getError()
+        rootfile.Close()
+
+        rootfile = rt.TFile( info['mc'], 'read' )
         hP = rootfile.Get('%s_Pass'%bindef['name'])
         hF = rootfile.Get('%s_Fail'%bindef['name'])
-        bin1 = 1
-        bin2 = hP.GetXaxis().GetNbins()
-        eP = rt.Double(-1.0)
-        eF = rt.Double(-1.0)
-        nP = hP.IntegralAndError(bin1,bin2,eP)
-        nF = hF.IntegralAndError(bin1,bin2,eF)
+
+        if eP > math.sqrt(hP.Integral()) : eP = math.sqrt(hP.Integral())
+        if eF > math.sqrt(hF.Integral()) : eF = math.sqrt(hF.Integral())
+        rootfile.Close()
+
 
         effis['mcNominal'] = computeEffi(nP,nF,eP,eF)
         rootfile.Close()

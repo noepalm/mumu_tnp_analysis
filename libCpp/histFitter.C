@@ -158,10 +158,10 @@ void tnpFitter::setWorkspaceJPsi(std::vector<std::string> workspace) {
   // //_work->factory(TString::Format("nSigF[%f,0.5,%f]",_nTotF*0.9,_nTotF*1.5));
   // _work->factory(TString::Format("nBkgF[%f,1e-8,%f]",TMath::Max(_nTotF*0.1, 2e-8), TMath::Max(_nTotF*1.5, 1.))); //min was 0.5
 
-  _work->factory(TString::Format("nSigP[%f,0.5,%f]",_nTotP*0.9,_nTotP*2));//1.5 before
+  _work->factory(TString::Format("nSigP[%f,0.5,%f]",_nTotP*0.9,_nTotP*2));//*1.5 before (max)
   _work->factory(TString::Format("nBkgP[%f,0.5,%f]",_nTotP*0.1,_nTotP*2));
-  _work->factory(TString::Format("nSigF[%f,0.1,%f]",_nTotF*0.9,_nTotF*2));
-  _work->factory(TString::Format("nBkgF[%f,0.5,%f]",_nTotF*0.1,_nTotF*2));
+  _work->factory(TString::Format("nSigF[%f,0.01,%f]",_nTotF*0.9,_nTotF*2));//min was 0.1, 
+  _work->factory(TString::Format("nBkgF[%f,0.01,%f]",_nTotF*0.1,_nTotF*2));//min was 0.5
 
   _work->factory("SUM::pdfPass(nSigP*sigResPass,nBkgP*bkgPass)");
   _work->factory("SUM::pdfFail(nSigF*sigResFail,nBkgF*bkgFail)");

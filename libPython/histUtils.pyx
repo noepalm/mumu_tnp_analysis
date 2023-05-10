@@ -116,7 +116,8 @@ def makePassFailHistograms( sample, flag, bindef, var ):
 
     # Find out with variables are used to activate the corresponding branches
     replace_patterns = ['&', '|', '+', '-', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
-    branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
+    # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
+    branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
     for p in replace_patterns:
         branches = branches.replace(p, ' ')
 
@@ -132,7 +133,8 @@ def makePassFailHistograms( sample, flag, bindef, var ):
         tree.SetBranchStatus(br, 1)
 
     # Set adress of pair mass
-    tree.SetBranchAddress("Jpsi_fit_mass", <void*>&pair_mass)
+    # tree.SetBranchAddress("Jpsi_fit_mass", <void*>&pair_mass)
+    tree.SetBranchAddress("Jpsi_nonfit_mass", <void*>&pair_mass) #just for MC
 
     ################
     # Loop over Tree

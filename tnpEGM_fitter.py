@@ -116,17 +116,19 @@ if sampleToFit is None:
 
 sampleMC = tnpConf.samplesDef['mcNom']
 
-# if sampleMC is None:
-#     print '[tnpEGM_fitter, prelim checks]: MC sample not available... check your settings'
-#     sys.exit(1)
+if sampleMC is None:
+    print '[tnpEGM_fitter, prelim checks]: MC sample not available... check your settings'
+    sys.exit(1)
 
 for s in tnpConf.samplesDef.keys():
     sample =  tnpConf.samplesDef[s]
     if sample is None: continue
-    setattr( sample, 'mcRef'     , sampleMC )
-    setattr( sample, 'nominalFit', '%s/%s_%s.nominalFit.root' % ( outputDirectory , sample.name, args.flag ) )
-    setattr( sample, 'altSigFit' , '%s/%s_%s.altSigFit.root'  % ( outputDirectory , sample.name, args.flag ) )
-    setattr( sample, 'altBkgFit' , '%s/%s_%s.altBkgFit.root'  % ( outputDirectory , sample.name, args.flag ) )
+    # setattr( sample, 'mcRef'     , sampleMC )
+    setattr( sample, 'mcRef'       , sampleMC )
+    setattr( sample, 'mcNominalFit', '%s/%s_%s.altSigFit.root'  % ( outputDirectory , sampleMC.name, args.flag ) )
+    setattr( sample, 'nominalFit'  , '%s/%s_%s.nominalFit.root' % ( outputDirectory , sample.name, args.flag ) )
+    setattr( sample, 'altSigFit'   , '%s/%s_%s.altSigFit.root'  % ( outputDirectory , sample.name, args.flag ) )
+    setattr( sample, 'altBkgFit'   , '%s/%s_%s.altBkgFit.root'  % ( outputDirectory , sample.name, args.flag ) )
 
 
 ### change the sample to fit is mc fit
@@ -185,8 +187,10 @@ if args.sumUp:
         'dataAltSig'  : sampleToFit.altSigFit,
         # 'dataAltSig'  : sampleToFit.nominalFit,  
         'dataAltBkg'  : sampleToFit.altBkgFit ,
+        'mc'	      : sampleToFit.mcRef.histFile,
+        'mcNominal'   : sampleToFit.mcNominalFit,
         # 'mcNominal'   : sampleToFit.mcRef.histFile,
-        'mcNominal'   : None,
+        # 'mcNominal'   : None,
         'mcAlt'       : None,
         'tagSel'      : None
         }

@@ -1,10 +1,12 @@
+set -n
+
 output_folder=$MYEOS/TnP
 
 # Define flags and their default values
 two_d_only=false
-no_save=false
 fit_only=false
 nominal=false
+copy_only=false
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -12,14 +14,14 @@ while [[ $# -gt 0 ]]; do
         -2d_only)
             two_d_only=true
             shift ;;
-        -no_save)
-            no_save=true
-            shift ;;
 		-fit_only)
 			fit_only=true
 			shift ;;
 		-nominal)
 			nominal=true
+			shift ;;
+		-copy_only)
+			copy_only=true
 			shift ;;
         *)
             echo "Unknown flag: $1"
@@ -27,45 +29,86 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-flagArray=('--createBins' '--createHists' '--doFit' '--doFit --altSig --mcSig' '--doFit --altSig' '--sumUp')
+flagArray=('--createBins' '--createHists' '--doFit' '--doFit --altSig --mcSig' '--doFit --altSig' '--doFit --altSig --iBin' '--sumUp')
+
+# bins def
+bins_2d=(2 3)
+bins_pt=(0)
 
 #iterate over 2D analysis, 1D pT projection and 1D eta projection by working folders
+# for folder in / /projPt /projEta /deltaR; do
 for folder in / /projPt /projEta; do
 
-	prefix=$([ ${#folder} == 1 ] && echo "" || echo "_")
-	settings_file=settings$prefix${folder:1}.py
+	if [[ $copy_only == false ]]; then
+		prefix=$([ ${#folder} == 1 ] && echo "" || echo "_")
+		settings_file=settings$prefix${folder:1}.py
 
-	# choosing print output
-	if [[ "$folder" == "/" ]]
-	then
-		echo "### 2D ANALYSIS"
-	elif [[ "$folder" == "/projPt" ]]
-	then
-		echo "##### 1D ANALYSIS: X projection (pT only)"		
-	elif [[ "$folder" == "/projEta" ]]
-	then
-		echo "##### 1D ANALYSIS: Y projection (eta only)"
+		# choosing print output
+		if [[ "$folder" == "/" ]]
+		then
+			echo "### 2D ANALYSIS"
+		elif [[ "$folder" == "/projPt" ]]
+		then
+			echo "##### 1D ANALYSIS: X projection (pT only)"		
+		elif [[ "$folder" == "/projEta" ]]
+		then
+			echo "##### 1D ANALYSIS: Y projection (eta only)"
+		# elif [[ "$folder" == "/deltaR" ]]
+		# then
+		# 	echo "##### 2D ANALYSIS: pT vs deltaR"
+		fi 
+
+		# Execute analysis
+		for flag in "${flagArray[@]}"
+		do
+			# if -fit_only, then skip bin evaluation/hist filling
+			# if -nominal, skip altSig fitting
+
+			# main command
+			if [[ ( ($flag == "--createBins" || $flag == "--createHists") && "$fit_only" == false) || ($flag == "--doFit" || $flag == "--sumUp") || (($flag == "--doFit --altSig --mcSig" || $flag == "--doFit --altSig") && "$nominal" == false)]]; then
+				python tnpEGM_fitter.py etc/config/$settings_file --flag DoubleMu $flag
+
+			# per-bin refit (fine tuning, different initial params)
+			elif [[ ($flag == "--doFit --altSig --iBin"*) && ($folder == "/" || $folder == "/projPt") ]]; then
+				bin_array=()
+				if [[ $folder == "/" ]]; then
+					bin_array=(${bins_2d[@]})
+				elif [[ $folder == "/projPt" ]]; then
+					bin_array=(${bins_pt[@]})
+				fi
+
+				for bin in "${bin_array[@]}"; do
+					flag_mod="${flag} ${bin}" #add bin to flag
+					settings_file_mod="${settings_file::-3}_bin${bin}.py" #change settings file to use
+					
+					python tnpEGM_fitter.py etc/config/$settings_file_mod --flag DoubleMu $flag_mod
+				done										
+			fi
+
+		done
+		
 	fi
 
-	# Execute analysis
-	for flag in "${flagArray[@]}"
-	do
-		# if -fit_only, then skip bin evaluation/hist filling
-		# if -nominal, skip altSig fitting
-		if [[( ($flag == "--createBins" || $flag == "--createHists") && "$fit_only" == false) || ($flag == "--doFit" || $flag == "--sumUp") || (($flag == "--doFit --altSig --mcSig" || $flag == "--doFit --altSig") && "$nominal" == false)]]; then
-			python tnpEGM_fitter.py etc/config/$settings_file --flag DoubleMu $flag
-		fi
-	done
-
-	
 	# Copying results file to eos
 	rm -r $output_folder$folder/nominalFit
-		echo "removed old plots"
+	echo "removed old plots in $output_folder$folder/nominalFit"
 	cp -r results/muons$folder/DoubleMu/plots/data/nominalFit/ $output_folder$folder
-	cp -r results/muons$folder/DoubleMu/plots/data/altSigFit/ $output_folder$folder
+	echo "copied fit plots folder results/muons$folder/DoubleMu/plots/data/nominalFit/ to $output_folder$folder"
+
+	rm -r ${output_folder}/MC${folder}/altSigFit
+	echo "removed old plots in $output_folder/MC$folder/altSigFit"
+	cp -r results/muons$folder/DoubleMu/plots/MC/altSigFit/ ${output_folder}/MC${folder}
+	echo "copied fit plots folder results/muons$folder/DoubleMu/plots/MC/altSigFit/ to $output_folder/MC$folder"
+
+	if [[ $nominal == false ]]; then
+		rm -r $output_folder$folder/altSigFit
+		echo "removed old plots in $output_folder$folder/altSigFit"
+		cp -r results/muons$folder/DoubleMu/plots/data/altSigFit/ $output_folder$folder
+		echo "copied fit plots folder results/muons$folder/DoubleMu/plots/data/altSigFit to $output_folder$folder"
+	fi
 	cp results/muons$folder/DoubleMu/egammaEffi.txt_egammaPlots.pdf $output_folder$folder
 	cp results/muons$folder/DoubleMu/egammaEffi.txt $output_folder$folder
-		echo "copied new plots + summary plot"
+	echo "copied summary plots + txt from results/muons$folder/DoubleMu to $output_folder$folder"
 
 	# Exit if -2d_only is provided
 	if [ "$two_d_only" = true ]; then
@@ -75,5 +118,7 @@ for folder in / /projPt /projEta; do
 done
 
 
-# draw and save efficiency plot
-echo ".q" | root -b "draw2Deff.C(\"$output_folder\")"
+if [[ $copy_only == false ]]; then
+	# draw and save efficiency plot
+	echo ".q" | root -b "draw2Deff.C(\"$output_folder\")"
+fi
