@@ -1,12 +1,12 @@
-set -n
-
 output_folder=$MYEOS/TnP
+input_folder=/muons
 
 # Define flags and their default values
 two_d_only=false
 fit_only=false
 nominal=false
 copy_only=false
+draw_only=false
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -23,6 +23,21 @@ while [[ $# -gt 0 ]]; do
 		-copy_only)
 			copy_only=true
 			shift ;;
+		-draw_only)
+			draw_only=true
+			shift ;;
+		-deltaR)
+			input_folder=/vs_pt_deltaR
+			output_folder=$MYEOS/TnP_vs_pt_deltaR
+			shift ;;
+		-tagInEB)
+			input_folder=/muons_tagInEB
+			output_folder=$MYEOS/TnP_tagInEB
+			shift ;;
+		-L1cuts)
+			input_folder=/muons_L1cuts
+			output_folder=$MYEOS/TnP_L1cuts
+			shift ;;
         *)
             echo "Unknown flag: $1"
             return 1 ;;
@@ -31,7 +46,7 @@ done
 
 flagArray=('--createBins' '--createHists' '--doFit' '--doFit --altSig --mcSig' '--doFit --altSig' '--doFit --altSig --iBin' '--sumUp')
 
-# bins def
+# bins to be refit (list bins by number)
 bins_2d=(2 3)
 bins_pt=(0)
 
@@ -39,7 +54,7 @@ bins_pt=(0)
 # for folder in / /projPt /projEta /deltaR; do
 for folder in / /projPt /projEta; do
 
-	if [[ $copy_only == false ]]; then
+	if [[ ($copy_only == false) && ($draw_only == false) ]]; then
 		prefix=$([ ${#folder} == 1 ] && echo "" || echo "_")
 		settings_file=settings$prefix${folder:1}.py
 
@@ -89,30 +104,33 @@ for folder in / /projPt /projEta; do
 		
 	fi
 
-	# Copying results file to eos
-	rm -r $output_folder$folder/nominalFit
-	echo "removed old plots in $output_folder$folder/nominalFit"
-	cp -r results/muons$folder/DoubleMu/plots/data/nominalFit/ $output_folder$folder
-	echo "copied fit plots folder results/muons$folder/DoubleMu/plots/data/nominalFit/ to $output_folder$folder"
+	if [[ $draw_only == false ]]; then
+		# Copying results file to eos
+		rm -r $output_folder$folder/nominalFit
+		echo "removed old plots in $output_folder$folder/nominalFit"
+		cp -r results$input_folder$folder/DoubleMu/plots/data/nominalFit $output_folder$folder
+		echo "copied fit plots folder results$input_folder$folder/DoubleMu/plots/data/nominalFit/ to $output_folder$folder/nominalFit"
 
-	rm -r ${output_folder}/MC${folder}/altSigFit
-	echo "removed old plots in $output_folder/MC$folder/altSigFit"
-	cp -r results/muons$folder/DoubleMu/plots/MC/altSigFit/ ${output_folder}/MC${folder}
-	echo "copied fit plots folder results/muons$folder/DoubleMu/plots/MC/altSigFit/ to $output_folder/MC$folder"
+		rm -r ${output_folder}/MC${folder}/altSigFit
+		echo "removed old plots in $output_folder/MC$folder/altSigFit"
+		cp -r results$input_folder$folder/DoubleMu/plots/MC/altSigFit ${output_folder}/MC${folder}
+		echo "copied fit plots folder results$input_folder$folder/DoubleMu/plots/MC/altSigFit/ to $output_folder/MC$folder/altSigFit"
 
-	if [[ $nominal == false ]]; then
-		rm -r $output_folder$folder/altSigFit
-		echo "removed old plots in $output_folder$folder/altSigFit"
-		cp -r results/muons$folder/DoubleMu/plots/data/altSigFit/ $output_folder$folder
-		echo "copied fit plots folder results/muons$folder/DoubleMu/plots/data/altSigFit to $output_folder$folder"
-	fi
-	cp results/muons$folder/DoubleMu/egammaEffi.txt_egammaPlots.pdf $output_folder$folder
-	cp results/muons$folder/DoubleMu/egammaEffi.txt $output_folder$folder
-	echo "copied summary plots + txt from results/muons$folder/DoubleMu to $output_folder$folder"
+		if [[ $nominal == false ]]; then
+			rm -r $output_folder$folder/altSigFit
+			echo "removed old plots in $output_folder$folder/altSigFit"
+			cp -r results$input_folder$folder/DoubleMu/plots/data/altSigFit/ $output_folder$folder
+			echo "copied fit plots folder results$input_folder$folder/DoubleMu/plots/data/altSigFit to $output_folder$folder"
+		fi
+		cp results$input_folder$folder/DoubleMu/egammaEffi.txt_egammaPlots.pdf $output_folder$folder
+		cp results$input_folder$folder/DoubleMu/egammaEffi.txt $output_folder$folder
+		echo "copied summary plots + txt from results$input_folder$folder/DoubleMu to $output_folder$folder"
 
-	# Exit if -2d_only is provided
-	if [ "$two_d_only" = true ]; then
-		return 0
+		# Exit if -2d_only is provided
+		if [ "$two_d_only" = true ]; then
+			return 0
+		fi
+
 	fi
 
 done
@@ -120,5 +138,5 @@ done
 
 if [[ $copy_only == false ]]; then
 	# draw and save efficiency plot
-	echo ".q" | root -b "draw2Deff.C(\"$output_folder\")"
+	echo ".q" | root -b "draw2Deff.C(\"$output_folder\", \"$input_folder\")"
 fi

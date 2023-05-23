@@ -42,5 +42,21 @@ void verifyData() {
 	// 4) Verify probe pT VS offline muons deltaR
 	TCanvas* c5 = new TCanvas("c5", "c5", 800, 800);
 	chain->Draw("Jpsi_m2_pt:Jpsi_muonsDr", "", "colz");
-	c5->Print("verifyData.pdf)", "pdf");
+	c5->Print("verifyData.pdf", "pdf");
+
+
+	TFile* fmc = TFile::Open("/eos/cms/store/user/crovelli/DoubleMuMC/TnP__JPsito2Mu_JPsiFilter_2MuFilter__Run3Summer22EE.root");
+	TTree* chainmc = (TTree*)fmc->Get("nano_/tree");
+
+	TCanvas* c6 = new TCanvas("c6", "c6", 800, 800);
+	chainmc->Draw("Jpsi_m2_Dimu_dR", "DoubleMu_fired == 1", "PFC");
+	chainmc->Draw("Jpsi_m2_Dimu_dR", "DoubleMu_fired == 0", "SAMES PFC");
+	c6->BuildLegend();
+	c6->Print("verifyData.pdf", "pdf");
+
+	TCanvas* c7 = new TCanvas("c7", "c7", 800, 800);
+	chainmc->Draw("Jpsi_m1_Dimu_dR", "DoubleMu_fired == 1", "PFC");
+	chainmc->Draw("Jpsi_m1_Dimu_dR", "DoubleMu_fired == 0", "SAMES PFC");
+	c7->BuildLegend();
+	c7->Print("verifyData.pdf)", "pdf");
 }

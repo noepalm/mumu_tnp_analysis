@@ -1,6 +1,6 @@
 {
 	// directory to search recursively (depth = 1 level)
-	TString path = "/eos/cms/store/user/crovelli/HLT_DoubleMu/DoubleMuTnP_v3";
+	TString path = "/eos/cms/store/user/crovelli/HLT_DoubleMu/DoubleMuTnP_v4";
 
 	TList* lis = new TList();
 
@@ -36,7 +36,7 @@
 	}
 
 	// create output file
-    TFile *ft = new TFile("DoubleMuTnp_v2.root","RECREATE");
+    TFile *ft = new TFile("DoubleMuTnp_v3.root","RECREATE");
     ft->mkdir("nano_");
     ft->cd("nano_");
 
@@ -48,5 +48,3 @@
 	ft->Close();
  
 }
-
-

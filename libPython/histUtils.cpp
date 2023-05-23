@@ -1636,6 +1636,8 @@ static const char __pyx_k_failI[] = "failI";
 static const char __pyx_k_hFail[] = "hFail";
 static const char __pyx_k_hPass[] = "hPass";
 static const char __pyx_k_index[] = "index";
+static const char __pyx_k_max_2[] = "max(";
+static const char __pyx_k_min_2[] = "min(";
 static const char __pyx_k_nbins[] = "nbins";
 static const char __pyx_k_nevts[] = "nevts";
 static const char __pyx_k_passI[] = "passI";
@@ -1750,8 +1752,10 @@ static PyObject *__pyx_n_s_makePassFailHistograms;
 static PyObject *__pyx_n_s_math;
 static PyObject *__pyx_n_s_max;
 static PyObject *__pyx_n_s_maxWeight;
+static PyObject *__pyx_kp_s_max_2;
 static PyObject *__pyx_n_s_mcTruth;
 static PyObject *__pyx_n_s_min;
+static PyObject *__pyx_kp_s_min_2;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_nbins;
@@ -2892,30 +2896,30 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  * 
  *         cutBinList.append(cutBin)             # <<<<<<<<<<<<<<
  * 
- *         bin_formulas.push_back(new TTreeFormula('%s_Selection' % bindef['bins'][ib]['name'], str.encode(cutBin), tree))
+ *         # print cutBinList
  */
     __pyx_t_17 = __Pyx_PyList_Append(__pyx_v_cutBinList, __pyx_v_cutBin); if (unlikely(__pyx_t_17 == ((int)-1))) __PYX_ERR(0, 102, __pyx_L1_error)
 
-    /* "histUtils.pyx":104
- *         cutBinList.append(cutBin)
+    /* "histUtils.pyx":106
+ *         # print cutBinList
  * 
  *         bin_formulas.push_back(new TTreeFormula('%s_Selection' % bindef['bins'][ib]['name'], str.encode(cutBin), tree))             # <<<<<<<<<<<<<<
  * 
  *         formulas_list.Add(<TObject*>bin_formulas[nbins])
  */
-    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_bindef, __pyx_n_s_bins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_bindef, __pyx_n_s_bins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_ib, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_ib, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_7, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_7, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyString_FormatSafe(__pyx_kp_s_s_Selection, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_FormatSafe(__pyx_kp_s_s_Selection, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_10 = __Pyx_PyObject_AsString(__pyx_t_7); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)(&PyString_Type)), __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_AsString(__pyx_t_7); if (unlikely((!__pyx_t_10) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)(&PyString_Type)), __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2929,20 +2933,20 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     }
     __pyx_t_1 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_6, __pyx_v_cutBin) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_cutBin);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_t_1); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_t_1); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
     try {
       __pyx_v_bin_formulas.push_back(new TTreeFormula(__pyx_t_10, __pyx_t_2, __pyx_v_tree));
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 104, __pyx_L1_error)
+      __PYX_ERR(0, 106, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "histUtils.pyx":106
+    /* "histUtils.pyx":108
  *         bin_formulas.push_back(new TTreeFormula('%s_Selection' % bindef['bins'][ib]['name'], str.encode(cutBin), tree))
  * 
  *         formulas_list.Add(<TObject*>bin_formulas[nbins])             # <<<<<<<<<<<<<<
@@ -2951,7 +2955,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_formulas_list.Add(((TObject *)(__pyx_v_bin_formulas[__pyx_v_nbins])));
 
-    /* "histUtils.pyx":108
+    /* "histUtils.pyx":110
  *         formulas_list.Add(<TObject*>bin_formulas[nbins])
  * 
  *         nbins = nbins + 1             # <<<<<<<<<<<<<<
@@ -2961,7 +2965,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     __pyx_v_nbins = (__pyx_v_nbins + 1);
   }
 
-  /* "histUtils.pyx":110
+  /* "histUtils.pyx":112
  *         nbins = nbins + 1
  * 
  *     formulas_list.Add(<TObject*>flag_formula)             # <<<<<<<<<<<<<<
@@ -2970,7 +2974,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_formulas_list.Add(((TObject *)__pyx_v_flag_formula));
 
-  /* "histUtils.pyx":111
+  /* "histUtils.pyx":113
  * 
  *     formulas_list.Add(<TObject*>flag_formula)
  *     tree.SetNotify(<TObject*> &formulas_list)             # <<<<<<<<<<<<<<
@@ -2979,14 +2983,14 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_tree->SetNotify(((TObject *)(&__pyx_v_formulas_list)));
 
-  /* "histUtils.pyx":118
+  /* "histUtils.pyx":120
  * 
  *     # Find out with variables are used to activate the corresponding branches
- *     replace_patterns = ['&', '|', '+', '-', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']             # <<<<<<<<<<<<<<
+ *     replace_patterns = ['&', '|', '+', '-', 'min(', 'max(', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']             # <<<<<<<<<<<<<<
  *     # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
- *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
+ *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC
  */
-  __pyx_t_1 = PyList_New(19); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(21); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_kp_s__2);
   __Pyx_GIVEREF(__pyx_kp_s__2);
@@ -3000,75 +3004,81 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   __Pyx_INCREF(__pyx_kp_s__5);
   __Pyx_GIVEREF(__pyx_kp_s__5);
   PyList_SET_ITEM(__pyx_t_1, 3, __pyx_kp_s__5);
+  __Pyx_INCREF(__pyx_kp_s_min_2);
+  __Pyx_GIVEREF(__pyx_kp_s_min_2);
+  PyList_SET_ITEM(__pyx_t_1, 4, __pyx_kp_s_min_2);
+  __Pyx_INCREF(__pyx_kp_s_max_2);
+  __Pyx_GIVEREF(__pyx_kp_s_max_2);
+  PyList_SET_ITEM(__pyx_t_1, 5, __pyx_kp_s_max_2);
   __Pyx_INCREF(__pyx_kp_s_cos);
   __Pyx_GIVEREF(__pyx_kp_s_cos);
-  PyList_SET_ITEM(__pyx_t_1, 4, __pyx_kp_s_cos);
+  PyList_SET_ITEM(__pyx_t_1, 6, __pyx_kp_s_cos);
   __Pyx_INCREF(__pyx_kp_s_sin);
   __Pyx_GIVEREF(__pyx_kp_s_sin);
-  PyList_SET_ITEM(__pyx_t_1, 5, __pyx_kp_s_sin);
+  PyList_SET_ITEM(__pyx_t_1, 7, __pyx_kp_s_sin);
   __Pyx_INCREF(__pyx_kp_s_sqrt);
   __Pyx_GIVEREF(__pyx_kp_s_sqrt);
-  PyList_SET_ITEM(__pyx_t_1, 6, __pyx_kp_s_sqrt);
+  PyList_SET_ITEM(__pyx_t_1, 8, __pyx_kp_s_sqrt);
   __Pyx_INCREF(__pyx_kp_s_fabs);
   __Pyx_GIVEREF(__pyx_kp_s_fabs);
-  PyList_SET_ITEM(__pyx_t_1, 7, __pyx_kp_s_fabs);
+  PyList_SET_ITEM(__pyx_t_1, 9, __pyx_kp_s_fabs);
   __Pyx_INCREF(__pyx_kp_s_abs);
   __Pyx_GIVEREF(__pyx_kp_s_abs);
-  PyList_SET_ITEM(__pyx_t_1, 8, __pyx_kp_s_abs);
+  PyList_SET_ITEM(__pyx_t_1, 10, __pyx_kp_s_abs);
   __Pyx_INCREF(__pyx_kp_s_pow);
   __Pyx_GIVEREF(__pyx_kp_s_pow);
-  PyList_SET_ITEM(__pyx_t_1, 9, __pyx_kp_s_pow);
+  PyList_SET_ITEM(__pyx_t_1, 11, __pyx_kp_s_pow);
   __Pyx_INCREF(__pyx_kp_s__6);
   __Pyx_GIVEREF(__pyx_kp_s__6);
-  PyList_SET_ITEM(__pyx_t_1, 10, __pyx_kp_s__6);
+  PyList_SET_ITEM(__pyx_t_1, 12, __pyx_kp_s__6);
   __Pyx_INCREF(__pyx_kp_s__7);
   __Pyx_GIVEREF(__pyx_kp_s__7);
-  PyList_SET_ITEM(__pyx_t_1, 11, __pyx_kp_s__7);
+  PyList_SET_ITEM(__pyx_t_1, 13, __pyx_kp_s__7);
   __Pyx_INCREF(__pyx_kp_s__8);
   __Pyx_GIVEREF(__pyx_kp_s__8);
-  PyList_SET_ITEM(__pyx_t_1, 12, __pyx_kp_s__8);
+  PyList_SET_ITEM(__pyx_t_1, 14, __pyx_kp_s__8);
   __Pyx_INCREF(__pyx_kp_s__9);
   __Pyx_GIVEREF(__pyx_kp_s__9);
-  PyList_SET_ITEM(__pyx_t_1, 13, __pyx_kp_s__9);
+  PyList_SET_ITEM(__pyx_t_1, 15, __pyx_kp_s__9);
   __Pyx_INCREF(__pyx_kp_s__10);
   __Pyx_GIVEREF(__pyx_kp_s__10);
-  PyList_SET_ITEM(__pyx_t_1, 14, __pyx_kp_s__10);
+  PyList_SET_ITEM(__pyx_t_1, 16, __pyx_kp_s__10);
   __Pyx_INCREF(__pyx_kp_s__11);
   __Pyx_GIVEREF(__pyx_kp_s__11);
-  PyList_SET_ITEM(__pyx_t_1, 15, __pyx_kp_s__11);
+  PyList_SET_ITEM(__pyx_t_1, 17, __pyx_kp_s__11);
   __Pyx_INCREF(__pyx_kp_s__12);
   __Pyx_GIVEREF(__pyx_kp_s__12);
-  PyList_SET_ITEM(__pyx_t_1, 16, __pyx_kp_s__12);
+  PyList_SET_ITEM(__pyx_t_1, 18, __pyx_kp_s__12);
   __Pyx_INCREF(__pyx_kp_s__13);
   __Pyx_GIVEREF(__pyx_kp_s__13);
-  PyList_SET_ITEM(__pyx_t_1, 17, __pyx_kp_s__13);
+  PyList_SET_ITEM(__pyx_t_1, 19, __pyx_kp_s__13);
   __Pyx_INCREF(__pyx_kp_s__14);
   __Pyx_GIVEREF(__pyx_kp_s__14);
-  PyList_SET_ITEM(__pyx_t_1, 18, __pyx_kp_s__14);
+  PyList_SET_ITEM(__pyx_t_1, 20, __pyx_kp_s__14);
   __pyx_v_replace_patterns = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "histUtils.pyx":120
- *     replace_patterns = ['&', '|', '+', '-', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
+  /* "histUtils.pyx":122
+ *     replace_patterns = ['&', '|', '+', '-', 'min(', 'max(', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
  *     # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
- *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC             # <<<<<<<<<<<<<<
+ *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC             # <<<<<<<<<<<<<<
  *     for p in replace_patterns:
  *         branches = branches.replace(p, ' ')
  */
-  __pyx_t_1 = __Pyx_PyString_Join(__pyx_kp_s__15, __pyx_v_cutBinList); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyString_Join(__pyx_kp_s__15, __pyx_v_cutBinList); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_Jpsi_nonfit_mass); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_t_7 = PyNumber_Add(__pyx_t_1, __pyx_kp_s_Jpsi_nonfit_mass); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_v_flag); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_v_flag); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_branches = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "histUtils.pyx":121
+  /* "histUtils.pyx":123
  *     # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
- *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
+ *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC
  *     for p in replace_patterns:             # <<<<<<<<<<<<<<
  *         branches = branches.replace(p, ' ')
  * 
@@ -3077,22 +3087,22 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   for (;;) {
     if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_7 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_7 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 123, __pyx_L1_error)
     #else
-    __pyx_t_7 = PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __pyx_t_7 = PySequence_ITEM(__pyx_t_1, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 123, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_p, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "histUtils.pyx":122
- *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
+    /* "histUtils.pyx":124
+ *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC
  *     for p in replace_patterns:
  *         branches = branches.replace(p, ' ')             # <<<<<<<<<<<<<<
  * 
  *     # Note: with str.encode we convert a string to bytes, which is needed for C++ functions
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_branches, __pyx_n_s_replace); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_branches, __pyx_n_s_replace); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 124, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     __pyx_t_13 = 0;
@@ -3109,7 +3119,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_p, __pyx_kp_s__15};
-      __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_13, 2+__pyx_t_13); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_13, 2+__pyx_t_13); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 124, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else
@@ -3117,13 +3127,13 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_p, __pyx_kp_s__15};
-      __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_13, 2+__pyx_t_13); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_13, 2+__pyx_t_13); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 124, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else
     #endif
     {
-      __pyx_t_18 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __pyx_t_18 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 124, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3134,7 +3144,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       __Pyx_INCREF(__pyx_kp_s__15);
       __Pyx_GIVEREF(__pyx_kp_s__15);
       PyTuple_SET_ITEM(__pyx_t_18, 1+__pyx_t_13, __pyx_kp_s__15);
-      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_18, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 122, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_18, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 124, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
     }
@@ -3142,9 +3152,9 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     __Pyx_DECREF_SET(__pyx_v_branches, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "histUtils.pyx":121
+    /* "histUtils.pyx":123
  *     # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
- *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
+ *     branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC
  *     for p in replace_patterns:             # <<<<<<<<<<<<<<
  *         branches = branches.replace(p, ' ')
  * 
@@ -3152,16 +3162,16 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "histUtils.pyx":125
+  /* "histUtils.pyx":127
  * 
  *     # Note: with str.encode we convert a string to bytes, which is needed for C++ functions
  *     branches = set([str.encode(x) for x in branches.split(" ") if x != '' and not is_number(x)])             # <<<<<<<<<<<<<<
  * 
  *     print branches
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_branches, __pyx_n_s_split); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_branches, __pyx_n_s_split); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_18 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -3175,16 +3185,16 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   }
   __pyx_t_7 = (__pyx_t_18) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_18, __pyx_kp_s__15) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s__15);
   __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (likely(PyList_CheckExact(__pyx_t_7)) || PyTuple_CheckExact(__pyx_t_7)) {
     __pyx_t_3 = __pyx_t_7; __Pyx_INCREF(__pyx_t_3); __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 127, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   for (;;) {
@@ -3192,17 +3202,17 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       if (likely(PyList_CheckExact(__pyx_t_3))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_3)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_7 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+        __pyx_t_7 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
         #else
-        __pyx_t_7 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
+        __pyx_t_7 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+        __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_7); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
         #else
-        __pyx_t_7 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
+        __pyx_t_7 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         #endif
       }
@@ -3212,7 +3222,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 125, __pyx_L1_error)
+          else __PYX_ERR(0, 127, __pyx_L1_error)
         }
         break;
       }
@@ -3220,13 +3230,13 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     }
     __Pyx_XDECREF_SET(__pyx_v_x, __pyx_t_7);
     __pyx_t_7 = 0;
-    __pyx_t_16 = (__Pyx_PyString_Equals(__pyx_v_x, __pyx_kp_s__16, Py_NE)); if (unlikely(__pyx_t_16 < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __pyx_t_16 = (__Pyx_PyString_Equals(__pyx_v_x, __pyx_kp_s__16, Py_NE)); if (unlikely(__pyx_t_16 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
     if (__pyx_t_16) {
     } else {
       __pyx_t_8 = __pyx_t_16;
       goto __pyx_L19_bool_binop_done;
     }
-    __Pyx_GetModuleGlobalName(__pyx_t_18, __pyx_n_s_is_number); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_18, __pyx_n_s_is_number); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_18);
     __pyx_t_6 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_18))) {
@@ -3240,16 +3250,16 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     }
     __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_18, __pyx_t_6, __pyx_v_x) : __Pyx_PyObject_CallOneArg(__pyx_t_18, __pyx_v_x);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
+    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-    __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_16 < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_16 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_9 = ((!__pyx_t_16) != 0);
     __pyx_t_8 = __pyx_t_9;
     __pyx_L19_bool_binop_done:;
     if (__pyx_t_8) {
-      __pyx_t_18 = __Pyx_PyObject_GetAttrStr(((PyObject *)(&PyString_Type)), __pyx_n_s_encode); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 125, __pyx_L1_error)
+      __pyx_t_18 = __Pyx_PyObject_GetAttrStr(((PyObject *)(&PyString_Type)), __pyx_n_s_encode); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 127, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __pyx_t_6 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_18))) {
@@ -3263,30 +3273,30 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       }
       __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_18, __pyx_t_6, __pyx_v_x) : __Pyx_PyObject_CallOneArg(__pyx_t_18, __pyx_v_x);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 125, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 125, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 127, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_3 = PySet_New(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF_SET(__pyx_v_branches, __pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "histUtils.pyx":127
+  /* "histUtils.pyx":129
  *     branches = set([str.encode(x) for x in branches.split(" ") if x != '' and not is_number(x)])
  * 
  *     print branches             # <<<<<<<<<<<<<<
  * 
  *     # Activate only branches which matter for the tag selection
  */
-  if (__Pyx_PrintOne(0, __pyx_v_branches) < 0) __PYX_ERR(0, 127, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_v_branches) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
 
-  /* "histUtils.pyx":130
+  /* "histUtils.pyx":132
  * 
  *     # Activate only branches which matter for the tag selection
  *     tree.SetBranchStatus("*", 0)             # <<<<<<<<<<<<<<
@@ -3295,7 +3305,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_tree->SetBranchStatus(((const char *)"*"), 0);
 
-  /* "histUtils.pyx":132
+  /* "histUtils.pyx":134
  *     tree.SetBranchStatus("*", 0)
  * 
  *     for br in branches:             # <<<<<<<<<<<<<<
@@ -3303,7 +3313,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  * 
  */
   __pyx_t_4 = 0;
-  __pyx_t_1 = __Pyx_set_iterator(__pyx_v_branches, 1, (&__pyx_t_11), (&__pyx_t_13)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_set_iterator(__pyx_v_branches, 1, (&__pyx_t_11), (&__pyx_t_13)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_3);
   __pyx_t_3 = __pyx_t_1;
@@ -3311,24 +3321,24 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   while (1) {
     __pyx_t_19 = __Pyx_set_iter_next(__pyx_t_3, __pyx_t_11, &__pyx_t_4, &__pyx_t_1, __pyx_t_13);
     if (unlikely(__pyx_t_19 == 0)) break;
-    if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 132, __pyx_L1_error)
+    if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_br, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "histUtils.pyx":133
+    /* "histUtils.pyx":135
  * 
  *     for br in branches:
  *         tree.SetBranchStatus(br, 1)             # <<<<<<<<<<<<<<
  * 
  *     # Set adress of pair mass
  */
-    __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_v_br); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_AsString(__pyx_v_br); if (unlikely((!__pyx_t_2) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L1_error)
     __pyx_v_tree->SetBranchStatus(__pyx_t_2, 1);
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "histUtils.pyx":137
+  /* "histUtils.pyx":139
  *     # Set adress of pair mass
  *     # tree.SetBranchAddress("Jpsi_fit_mass", <void*>&pair_mass)
  *     tree.SetBranchAddress("Jpsi_nonfit_mass", <void*>&pair_mass) #just for MC             # <<<<<<<<<<<<<<
@@ -3337,7 +3347,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_tree->SetBranchAddress(((const char *)"Jpsi_nonfit_mass"), ((void *)(&__pyx_v_pair_mass)));
 
-  /* "histUtils.pyx":143
+  /* "histUtils.pyx":145
  *     ################
  * 
  *     nevts = tree.GetEntries()             # <<<<<<<<<<<<<<
@@ -3346,7 +3356,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_nevts = __pyx_v_tree->GetEntries();
 
-  /* "histUtils.pyx":144
+  /* "histUtils.pyx":146
  * 
  *     nevts = tree.GetEntries()
  *     frac_of_nevts = nevts/20             # <<<<<<<<<<<<<<
@@ -3355,16 +3365,16 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_frac_of_nevts = __Pyx_div_long(__pyx_v_nevts, 20);
 
-  /* "histUtils.pyx":146
+  /* "histUtils.pyx":148
  *     frac_of_nevts = nevts/20
  * 
  *     print("Starting event loop to fill histograms...")             # <<<<<<<<<<<<<<
  * 
  *     for index in range(nevts):
  */
-  if (__Pyx_PrintOne(0, __pyx_kp_s_Starting_event_loop_to_fill_hist) < 0) __PYX_ERR(0, 146, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_kp_s_Starting_event_loop_to_fill_hist) < 0) __PYX_ERR(0, 148, __pyx_L1_error)
 
-  /* "histUtils.pyx":148
+  /* "histUtils.pyx":150
  *     print("Starting event loop to fill histograms...")
  * 
  *     for index in range(nevts):             # <<<<<<<<<<<<<<
@@ -3376,7 +3386,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
   for (__pyx_t_20 = 0; __pyx_t_20 < __pyx_t_19; __pyx_t_20+=1) {
     __pyx_v_index = __pyx_t_20;
 
-    /* "histUtils.pyx":149
+    /* "histUtils.pyx":151
  * 
  *     for index in range(nevts):
  *         if index % frac_of_nevts == 0:             # <<<<<<<<<<<<<<
@@ -3385,21 +3395,21 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     if (unlikely(__pyx_v_frac_of_nevts == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
-      __PYX_ERR(0, 149, __pyx_L1_error)
+      __PYX_ERR(0, 151, __pyx_L1_error)
     }
     __pyx_t_8 = ((__Pyx_mod_int(__pyx_v_index, __pyx_v_frac_of_nevts) == 0) != 0);
     if (__pyx_t_8) {
 
-      /* "histUtils.pyx":150
+      /* "histUtils.pyx":152
  *     for index in range(nevts):
  *         if index % frac_of_nevts == 0:
  *             print outcount, "%"             # <<<<<<<<<<<<<<
  *             outcount = outcount + 5
  * 
  */
-      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_outcount); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_outcount); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
@@ -3407,10 +3417,10 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       __Pyx_GIVEREF(__pyx_kp_s__17);
       PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_kp_s__17);
       __pyx_t_3 = 0;
-      if (__Pyx_Print(0, __pyx_t_1, 1) < 0) __PYX_ERR(0, 150, __pyx_L1_error)
+      if (__Pyx_Print(0, __pyx_t_1, 1) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "histUtils.pyx":151
+      /* "histUtils.pyx":153
  *         if index % frac_of_nevts == 0:
  *             print outcount, "%"
  *             outcount = outcount + 5             # <<<<<<<<<<<<<<
@@ -3419,7 +3429,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
       __pyx_v_outcount = (__pyx_v_outcount + 5);
 
-      /* "histUtils.pyx":149
+      /* "histUtils.pyx":151
  * 
  *     for index in range(nevts):
  *         if index % frac_of_nevts == 0:             # <<<<<<<<<<<<<<
@@ -3428,7 +3438,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     }
 
-    /* "histUtils.pyx":153
+    /* "histUtils.pyx":155
  *             outcount = outcount + 5
  * 
  *         tree.GetEntry(index)             # <<<<<<<<<<<<<<
@@ -3437,7 +3447,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     (void)(__pyx_v_tree->GetEntry(__pyx_v_index));
 
-    /* "histUtils.pyx":155
+    /* "histUtils.pyx":157
  *         tree.GetEntry(index)
  * 
  *         for bnidx in range(nbins):             # <<<<<<<<<<<<<<
@@ -3449,7 +3459,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
       __pyx_v_bnidx = __pyx_t_23;
 
-      /* "histUtils.pyx":156
+      /* "histUtils.pyx":158
  * 
  *         for bnidx in range(nbins):
  *             weight = bin_formulas[bnidx].EvalInstance(0)             # <<<<<<<<<<<<<<
@@ -3458,7 +3468,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
       __pyx_v_weight = (__pyx_v_bin_formulas[__pyx_v_bnidx])->EvalInstance(0);
 
-      /* "histUtils.pyx":157
+      /* "histUtils.pyx":159
  *         for bnidx in range(nbins):
  *             weight = bin_formulas[bnidx].EvalInstance(0)
  *             if weight:             # <<<<<<<<<<<<<<
@@ -3468,7 +3478,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       __pyx_t_8 = (__pyx_v_weight != 0);
       if (__pyx_t_8) {
 
-        /* "histUtils.pyx":158
+        /* "histUtils.pyx":160
  *             weight = bin_formulas[bnidx].EvalInstance(0)
  *             if weight:
  *                 if flag_formula.EvalInstance(0):             # <<<<<<<<<<<<<<
@@ -3478,7 +3488,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
         __pyx_t_8 = (__pyx_v_flag_formula->EvalInstance(0) != 0);
         if (__pyx_t_8) {
 
-          /* "histUtils.pyx":159
+          /* "histUtils.pyx":161
  *             if weight:
  *                 if flag_formula.EvalInstance(0):
  *                     hPass[bnidx].Fill(pair_mass, weight)             # <<<<<<<<<<<<<<
@@ -3487,7 +3497,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
           (void)((__pyx_v_hPass[__pyx_v_bnidx])->Fill(__pyx_v_pair_mass, __pyx_v_weight));
 
-          /* "histUtils.pyx":158
+          /* "histUtils.pyx":160
  *             weight = bin_formulas[bnidx].EvalInstance(0)
  *             if weight:
  *                 if flag_formula.EvalInstance(0):             # <<<<<<<<<<<<<<
@@ -3497,7 +3507,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
           goto __pyx_L29;
         }
 
-        /* "histUtils.pyx":161
+        /* "histUtils.pyx":163
  *                     hPass[bnidx].Fill(pair_mass, weight)
  *                 else:
  *                     hFail[bnidx].Fill(pair_mass, weight)             # <<<<<<<<<<<<<<
@@ -3509,7 +3519,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
         }
         __pyx_L29:;
 
-        /* "histUtils.pyx":162
+        /* "histUtils.pyx":164
  *                 else:
  *                     hFail[bnidx].Fill(pair_mass, weight)
  *                 break             # <<<<<<<<<<<<<<
@@ -3518,7 +3528,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
         goto __pyx_L27_break;
 
-        /* "histUtils.pyx":157
+        /* "histUtils.pyx":159
  *         for bnidx in range(nbins):
  *             weight = bin_formulas[bnidx].EvalInstance(0)
  *             if weight:             # <<<<<<<<<<<<<<
@@ -3530,22 +3540,22 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     __pyx_L27_break:;
   }
 
-  /* "histUtils.pyx":168
+  /* "histUtils.pyx":170
  *     #####################
  * 
  *     for ib in range(len(bindef['bins'])):             # <<<<<<<<<<<<<<
  *         removeNegativeBins(hPass[ib])
  *         removeNegativeBins(hFail[ib])
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_bindef, __pyx_n_s_bins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_bindef, __pyx_n_s_bins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 168, __pyx_L1_error)
+  __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 170, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_4 = __pyx_t_11;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_4; __pyx_t_12+=1) {
     __pyx_v_ib = __pyx_t_12;
 
-    /* "histUtils.pyx":169
+    /* "histUtils.pyx":171
  * 
  *     for ib in range(len(bindef['bins'])):
  *         removeNegativeBins(hPass[ib])             # <<<<<<<<<<<<<<
@@ -3554,7 +3564,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_f_9histUtils_removeNegativeBins((__pyx_v_hPass[__pyx_v_ib]));
 
-    /* "histUtils.pyx":170
+    /* "histUtils.pyx":172
  *     for ib in range(len(bindef['bins'])):
  *         removeNegativeBins(hPass[ib])
  *         removeNegativeBins(hFail[ib])             # <<<<<<<<<<<<<<
@@ -3563,7 +3573,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_f_9histUtils_removeNegativeBins((__pyx_v_hFail[__pyx_v_ib]));
 
-    /* "histUtils.pyx":172
+    /* "histUtils.pyx":174
  *         removeNegativeBins(hFail[ib])
  * 
  *         hPass[ib].Write(hPass[ib].GetName())             # <<<<<<<<<<<<<<
@@ -3572,7 +3582,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     (void)((__pyx_v_hPass[__pyx_v_ib])->Write((__pyx_v_hPass[__pyx_v_ib])->GetName()));
 
-    /* "histUtils.pyx":173
+    /* "histUtils.pyx":175
  * 
  *         hPass[ib].Write(hPass[ib].GetName())
  *         hFail[ib].Write(hFail[ib].GetName())             # <<<<<<<<<<<<<<
@@ -3581,7 +3591,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     (void)((__pyx_v_hFail[__pyx_v_ib])->Write((__pyx_v_hFail[__pyx_v_ib])->GetName()));
 
-    /* "histUtils.pyx":175
+    /* "histUtils.pyx":177
  *         hFail[ib].Write(hFail[ib].GetName())
  * 
  *         bin1 = 1             # <<<<<<<<<<<<<<
@@ -3590,7 +3600,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_bin1 = 1;
 
-    /* "histUtils.pyx":176
+    /* "histUtils.pyx":178
  * 
  *         bin1 = 1
  *         bin2 = hPass[ib].GetXaxis().GetNbins()             # <<<<<<<<<<<<<<
@@ -3599,7 +3609,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_bin2 = (__pyx_v_hPass[__pyx_v_ib])->GetXaxis()->GetNbins();
 
-    /* "histUtils.pyx":177
+    /* "histUtils.pyx":179
  *         bin1 = 1
  *         bin2 = hPass[ib].GetXaxis().GetNbins()
  *         passI = hPass[ib].IntegralAndError(bin1,bin2,epass)             # <<<<<<<<<<<<<<
@@ -3608,7 +3618,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_passI = (__pyx_v_hPass[__pyx_v_ib])->IntegralAndError(__pyx_v_bin1, __pyx_v_bin2, __pyx_v_epass);
 
-    /* "histUtils.pyx":178
+    /* "histUtils.pyx":180
  *         bin2 = hPass[ib].GetXaxis().GetNbins()
  *         passI = hPass[ib].IntegralAndError(bin1,bin2,epass)
  *         failI = hFail[ib].IntegralAndError(bin1,bin2,efail)             # <<<<<<<<<<<<<<
@@ -3617,7 +3627,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_failI = (__pyx_v_hFail[__pyx_v_ib])->IntegralAndError(__pyx_v_bin1, __pyx_v_bin2, __pyx_v_efail);
 
-    /* "histUtils.pyx":179
+    /* "histUtils.pyx":181
  *         passI = hPass[ib].IntegralAndError(bin1,bin2,epass)
  *         failI = hFail[ib].IntegralAndError(bin1,bin2,efail)
  *         eff   = 0             # <<<<<<<<<<<<<<
@@ -3626,7 +3636,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
     __pyx_v_eff = 0.0;
 
-    /* "histUtils.pyx":180
+    /* "histUtils.pyx":182
  *         failI = hFail[ib].IntegralAndError(bin1,bin2,efail)
  *         eff   = 0
  *         e_eff = 0             # <<<<<<<<<<<<<<
@@ -3636,7 +3646,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_XDECREF_SET(__pyx_v_e_eff, __pyx_int_0);
 
-    /* "histUtils.pyx":181
+    /* "histUtils.pyx":183
  *         eff   = 0
  *         e_eff = 0
  *         if passI > 0 :             # <<<<<<<<<<<<<<
@@ -3646,7 +3656,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     __pyx_t_8 = ((__pyx_v_passI > 0.0) != 0);
     if (__pyx_t_8) {
 
-      /* "histUtils.pyx":182
+      /* "histUtils.pyx":184
  *         e_eff = 0
  *         if passI > 0 :
  *             itot  = (passI+failI)             # <<<<<<<<<<<<<<
@@ -3655,7 +3665,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
       __pyx_v_itot = (__pyx_v_passI + __pyx_v_failI);
 
-      /* "histUtils.pyx":183
+      /* "histUtils.pyx":185
  *         if passI > 0 :
  *             itot  = (passI+failI)
  *             eff   = passI / (passI+failI)             # <<<<<<<<<<<<<<
@@ -3665,23 +3675,23 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       __pyx_t_14 = (__pyx_v_passI + __pyx_v_failI);
       if (unlikely(__pyx_t_14 == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 183, __pyx_L1_error)
+        __PYX_ERR(0, 185, __pyx_L1_error)
       }
       __pyx_v_eff = (__pyx_v_passI / __pyx_t_14);
 
-      /* "histUtils.pyx":184
+      /* "histUtils.pyx":186
  *             itot  = (passI+failI)
  *             eff   = passI / (passI+failI)
  *             e_eff = math.sqrt(passI*passI*efail*efail + failI*failI*epass*epass) / (itot*itot)             # <<<<<<<<<<<<<<
  *         #print cuts
  *         #print '    ==> pass: %.1f +/- %.1f ; fail : %.1f +/- %.1f : eff: %1.3f +/- %1.3f' % (passI,epass,failI,efail,eff,e_eff)
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_math); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_math); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_sqrt_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_sqrt_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = PyFloat_FromDouble(((((__pyx_v_passI * __pyx_v_passI) * __pyx_v_efail) * __pyx_v_efail) + (((__pyx_v_failI * __pyx_v_failI) * __pyx_v_epass) * __pyx_v_epass))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(((((__pyx_v_passI * __pyx_v_passI) * __pyx_v_efail) * __pyx_v_efail) + (((__pyx_v_failI * __pyx_v_failI) * __pyx_v_epass) * __pyx_v_epass))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __pyx_t_18 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -3696,19 +3706,19 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
       __pyx_t_1 = (__pyx_t_18) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_18, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_3);
       __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = PyFloat_FromDouble((__pyx_v_itot * __pyx_v_itot)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_7 = PyFloat_FromDouble((__pyx_v_itot * __pyx_v_itot)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_e_eff, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "histUtils.pyx":181
+      /* "histUtils.pyx":183
  *         eff   = 0
  *         e_eff = 0
  *         if passI > 0 :             # <<<<<<<<<<<<<<
@@ -3718,7 +3728,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
     }
   }
 
-  /* "histUtils.pyx":192
+  /* "histUtils.pyx":194
  *     ##########
  * 
  *     outfile.Close()             # <<<<<<<<<<<<<<
@@ -3726,7 +3736,7 @@ static PyObject *__pyx_pf_9histUtils_2makePassFailHistograms(CYTHON_UNUSED PyObj
  */
   __pyx_v_outfile->Close();
 
-  /* "histUtils.pyx":193
+  /* "histUtils.pyx":195
  * 
  *     outfile.Close()
  *     tree.Delete()             # <<<<<<<<<<<<<<
@@ -3880,8 +3890,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_math, __pyx_k_math, sizeof(__pyx_k_math), 0, 0, 1, 1},
   {&__pyx_n_s_max, __pyx_k_max, sizeof(__pyx_k_max), 0, 0, 1, 1},
   {&__pyx_n_s_maxWeight, __pyx_k_maxWeight, sizeof(__pyx_k_maxWeight), 0, 0, 1, 1},
+  {&__pyx_kp_s_max_2, __pyx_k_max_2, sizeof(__pyx_k_max_2), 0, 0, 1, 0},
   {&__pyx_n_s_mcTruth, __pyx_k_mcTruth, sizeof(__pyx_k_mcTruth), 0, 0, 1, 1},
   {&__pyx_n_s_min, __pyx_k_min, sizeof(__pyx_k_min), 0, 0, 1, 1},
+  {&__pyx_kp_s_min_2, __pyx_k_min_2, sizeof(__pyx_k_min_2), 0, 0, 1, 0},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_nbins, __pyx_k_nbins, sizeof(__pyx_k_nbins), 0, 0, 1, 1},

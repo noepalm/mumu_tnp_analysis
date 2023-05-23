@@ -1,17 +1,31 @@
 #############################################################
 # General settings
 
-# flag to be Tested
-DoubleMu = 'DoubleMu_fired == 1'					# trigger fired
-DoubleMu += ' && Jpsi_m1_Dimu_pt != Jpsi_m2_Dimu_pt'			# NOT (same HLT object matched to both offline muons)
-DoubleMu += ' && Jpsi_m2_Dimu_dR < 0.1'					# probe HLT candidate matched to an offline muon
+#if true, binning vs deltaR. Must also cadd -deltaR flag when launching runAnalysis.sh
+is_vs_deltaR = True
+is_tagInEB = False
+is_L1cuts = False
 
+# flag to be Tested
+
+DoubleMu = 'DoubleMu_fired == 1'		       			# trigger fired
+DoubleMu += ' && Jpsi_m1_Dimu_pt != Jpsi_m2_Dimu_pt'			# NOT (same HLT object matched to both offline muons)
+DoubleMu += ' && Jpsi_m1_Dimu_dR < 0.1 && Jpsi_m2_Dimu_dR < 0.1'	# probe HLT candidates matched to offline muons
 
 # flag to be Tested
 flags = {
     'DoubleMu' : DoubleMu
     }
-baseOutDir = 'results/muons/'
+
+if is_vs_deltaR:
+    baseOutDir = 'results/vs_pt_deltaR/'
+elif is_L1cuts:
+    baseOutDir = 'results/muons_L1cuts/'
+elif is_tagInEB:
+    baseOutDir = 'results/muons_tagInEB/'
+else:
+    baseOutDir = 'results/muons/'
+
 
 #############################################################
 # Samples definition  - preparing the samples
@@ -21,8 +35,18 @@ baseOutDir = 'results/muons/'
 import etc.inputs.tnpSampleDef as tnpSamples
 tnpTreeDir = 'nano_'
 
+# samplesDef = {
+#     'data'   : tnpSamples.Parking_X['data'].clone(),
+#     'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
+#     'mcAlt'  : None,
+#     'tagSel' : None
+#     # 'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
+#     # 'mcAlt'  : tnpSamples.Parking_X['MC'].clone(),
+#     # 'tagSel' : tnpSamples.Parking_X['MC'].clone(),
+# }
+
 samplesDef = {
-    'data'   : tnpSamples.Parking_X['data'].clone(),
+    'data'   : tnpSamples.Parking_X['dataE_0'].clone(),
     'mcNom'  : tnpSamples.Parking_X['MC'].clone(),
     'mcAlt'  : None,
     'tagSel' : None
@@ -30,6 +54,14 @@ samplesDef = {
     # 'mcAlt'  : tnpSamples.Parking_X['MC'].clone(),
     # 'tagSel' : tnpSamples.Parking_X['MC'].clone(),
 }
+
+samplesDef['data'].rename('data');
+
+# add all files for relevant run
+for run in ["E", "F", "G"]:
+    for idx in range(8):
+        if not (run == "E" and idx == 0):
+            samplesDef['data'].add_sample( tnpSamples.Parking_X['data{}_{}'.format(run, idx)] )
 
 ## if you need to use 2 times the same sample, then rename the second one
 if not samplesDef['mcAlt'] is None:
@@ -45,35 +77,54 @@ weightName = 'weight'    # 1 for data; pu_weight for MC
 
 #############################################################
 # Bining definition  [can be nD bining]
-biningDef = [
-    { 'var' : 'abs(Jpsi_m2_eta)', 'type' : 'float' , 'bins' : [0, 1.5, 2.6]},
-    # { 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [0, 0.2, 0.4, 0.6, 1.]},
-    # { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3., 3.1, 3.2, 3.5, 4., 6., 7., 8., 9., 10., 12., 40]},
-    { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40]},
-]
+
+if is_vs_deltaR:
+    biningDef = [
+        { 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [0, 0.2, 0.4, 0.6, 1.]},
+        # { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3., 3.1, 3.2, 3.5, 4., 6., 7., 8., 9., 10., 12., 40]},
+        { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40]},
+    ]
+
+else:
+    biningDef = [
+        { 'var' : 'abs(Jpsi_m2_eta)', 'type' : 'float' , 'bins' : [0, 1.4, 2.6]},
+        # { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3., 3.1, 3.2, 3.5, 4., 6., 7., 8., 9., 10., 12., 40]},
+        { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40]},
+    ]
+    
 
 #############################################################
 # Cuts definition for all samples
 
 cutBase = ''
+
 ## turn-on cuts
 cutBase += 'Jpsi_m1_pt > 2.8 && Jpsi_m2_pt > 2.8'
-cutBase += ' && abs(Jpsi_m1_eta) < 2.5 && abs(Jpsi_m2_eta) < 2.5'
+if is_vs_deltaR:
+    cutBase += ' && abs(Jpsi_m1_eta) < 2.4 && abs(Jpsi_m2_eta) < 2.4'
+else:
+    cutBase += ' && abs(Jpsi_m1_eta) < 2.6 && abs(Jpsi_m2_eta) < 2.6' #2.5 before
 # cutBase += ' && Jpsi_fit_pt > 4.9'
-cutBase += ' && Jpsi_nonfit_pt > 4.9'
+cutBase += ' && Jpsi_nonfit_pt > 5.0' #4.9 nominal
+cutBase += ' && Jpsi_m1_pt > 7.8' #already imposed on data, but not on MC
+
 ## mass cuts
 # cutBase += ' && Jpsi_fit_mass > 2.6 && Jpsi_fit_mass < 3.5' 
 cutBase += ' && Jpsi_nonfit_mass > 2.6 && Jpsi_nonfit_mass < 3.5' 
+
+if is_tagInEB:
+    cutBase += ' && Jpsi_m1_eta < 1.4'
+
+# L1 cuts (100% efficient)
+if is_L1cuts:
+    cutBase += '&& Jpsi_muonsDr < 1.1' #1.2 nominal
+    cutBase += '&& abs(Jpsi_m1_eta - Jpsi_m2_eta) < 1.4' #1.5 nominal
+    cutBase += '&& abs(Jpsi_m1_eta) < 1.3 && abs(Jpsi_m2_eta) < 1.3' #1.4 nominal
+
 ## sanity cuts
 # cutBase += ' && Jpsi_m1_trgobj_pt != Jpsi_m2_trgobj_pt'
 
-
 # can add addtionnal cuts for some bins (first check bin number using tnpEGM --checkBins)
-#additionalCuts = { 
-#    0 : 'tag_Ele_trigMVA > 0.92 && sqrt( 2*event_met_pfmet*tag_Ele_pt*(1-cos(event_met_pfphi-tag_Ele_phi))) < 45'
-#}
-
-# or remove any additional cut (default)
 additionalCuts = None
 
 #############################################################

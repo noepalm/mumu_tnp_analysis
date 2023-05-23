@@ -101,6 +101,8 @@ def makePassFailHistograms( sample, flag, bindef, var ):
 
         cutBinList.append(cutBin)
 
+        # print cutBinList
+
         bin_formulas.push_back(new TTreeFormula('%s_Selection' % bindef['bins'][ib]['name'], str.encode(cutBin), tree))
 
         formulas_list.Add(<TObject*>bin_formulas[nbins])
@@ -115,9 +117,9 @@ def makePassFailHistograms( sample, flag, bindef, var ):
     ######################################
 
     # Find out with variables are used to activate the corresponding branches
-    replace_patterns = ['&', '|', '+', '-', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
+    replace_patterns = ['&', '|', '+', '-', 'min(', 'max(', 'cos(', 'sin(', 'sqrt(', 'fabs(', 'abs(', 'pow(', '(', ')', '>', '<', '=', '!', '*', '/', ',']
     # branches = " ".join(cutBinList) + ' Jpsi_fit_mass ' + flag
-    branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag #just for MC
+    branches = " ".join(cutBinList) + ' Jpsi_nonfit_mass ' + flag	#just for MC
     for p in replace_patterns:
         branches = branches.replace(p, ' ')
 
