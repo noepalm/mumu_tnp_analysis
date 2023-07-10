@@ -5,8 +5,9 @@ baseOutDir = 'results/muons/deltaR'
 
 ### Binning
 biningDef = [
-    { 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [0, 0.2, 0.4, 0.6, 1.]},
-    { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40]},
+    #{ 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [0, 0.2, 0.4, 0.6, 1.]},
+    { 'var' : 'Jpsi_muonsDr', 'type' : 'float' , 'bins' : [1/7.*i for i in range(8)] },
+    { 'var' : 'Jpsi_m2_pt', 'type' : 'float' , 'bins' : [2.9, 3.1, 3.4, 5, 7., 9., 12., 40] },
 ]
 
 ### Base cuts (both num/dem)

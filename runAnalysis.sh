@@ -7,13 +7,18 @@ fit_only=false
 nominal=false
 copy_only=false
 draw_only=false
+is_deltaR=false
+is_deltaR_eta=false
+is_L1cuts=false
+is_prescale=false
+is_altref=false
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -2d_only)
-            two_d_only=true
-            shift ;;
+      -2d_only)
+			two_d_only=true
+			shift ;;
 		-fit_only)
 			fit_only=true
 			shift ;;
@@ -27,28 +32,67 @@ while [[ $# -gt 0 ]]; do
 			draw_only=true
 			shift ;;
 		-deltaR)
+			is_deltaR=true
 			input_folder=/vs_pt_deltaR
 			output_folder=$MYEOS/TnP_vs_pt_deltaR
 			shift ;;
+		-deltaR_eta)
+		  is_deltaR_eta=true
+			input_folder=/vs_deltaR_eta
+			output_folder=$MYEOS/TnP_vs_deltaR_eta
+			shift ;;
 		-tagInEB)
-			input_folder=/muons_tagInEB
+		  input_folder=/muons_tagInEB
 			output_folder=$MYEOS/TnP_tagInEB
 			shift ;;
 		-L1cuts)
-			input_folder=/muons_L1cuts
-			output_folder=$MYEOS/TnP_L1cuts
+			is_L1cuts=true
 			shift ;;
-        *)
-            echo "Unknown flag: $1"
-            return 1 ;;
+		-prescale)
+			is_prescale=true
+			shift ;;
+		-altref)
+		  is_altref=true
+			shift ;;
+		*)
+        echo "Unknown flag: $1"
+        return 1 ;;
     esac
 done
+
+if [[ $is_L1cuts == true ]]; then
+	input_folder=${input_folder}_L1cuts
+	output_folder=${output_folder}_L1cuts
+fi
+
+
+if [[ $is_prescale == true ]]; then
+	input_folder=${input_folder}_prescale
+	output_folder=${output_folder}_prescale
+fi
+
+if [[ $is_altref == true ]]; then
+  input_folder=/altref${input_folder}
+	output_folder=${MYEOS}/TnP_altref${output_folder:${#MYEOS}}
+fi
 
 flagArray=('--createBins' '--createHists' '--doFit' '--doFit --altSig --mcSig' '--doFit --altSig' '--doFit --altSig --iBin' '--sumUp')
 
 # bins to be refit (list bins by number)
-bins_2d=(2 3)
-bins_pt=(0)
+# bins_2d=(2 3)
+# bins_pt=(0)
+bins_2d=()
+bins_pt=()
+
+if [[ ($is_deltaR_eta == true) && ($is_L1cuts == false) && ($is_altref == false) ]]; then
+	bins_2d=(7)
+	bins_pt=(0)
+fi
+
+if [[ ($is_deltaR == true) && ($is_L1cuts == false) && ($is_altref == false) ]]; then
+  bins_2d=(12)
+fi
+
 
 #iterate over 2D analysis, 1D pT projection and 1D eta projection by working folders
 # for folder in / /projPt /projEta /deltaR; do

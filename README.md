@@ -1,176 +1,98 @@
-# egm_tnp_analysis
+# Introduction
+This is a fork of egm_tnp_analysis, which uses the tag and probe analysis to analyze the efficiency of a dimuon trigger path. It has been modified to accomodate the needs of this specific analysis.
 
-## General note on installation
+# Setup instructions
+* **For running**: Same steps as main repo (setup files have been slightly modified).
+Additionally, a global environment variable `$MY_EOS` must be defined containing the path to the output folder (I used by EOS path). All subfolders are handled by the program.
+* **For editing**: must setup CPython to edit `.pyc` files (which are converted to `.C` and must be then compiled with `make`).
 
-This code can in principle run on your laptop but you need ROOT 6.10 or higher and RooFit installed to use some advanced features when creating histograms.
-The easiest thing to do is to set the environement in a 10_1_X release:
+# Fork differences
 
->cmsrel CMSSW_10_1_1
+* A wrapper to run the code to obtain 1D projections has been added;
+* Since this code uses the alternative model as the main one (i.e. gaussian for signal + exponential for backgoound), all drawing was handled by the new macro `draw2Deff.C` (which, despite its name, also draws the 1D projections for each variable). This is to be used through the wrapper;
+* $y$ variable is not automatically extended to negative values, so the same code can be used for positive definite quantities (e.g. $\Delta R$);
+* [Other stuff I surely forgot]
 
->cd CMSSW_10_1_1/src
+# Usage
+The program is set up can calculate 1D and 2D efficiencies vs. probe's $p_T$, $\eta$ and $\Delta R$ between the tag and probe (in all possible combinations). This is done by running the original code in various settings.
 
->cmsenv
+Use the wrapper by using:
+```source runAnalysis.sh <-flags>```
 
+To select each setting, you must:
+* Activate the corresponding flag in `etc/config/settings.py`;
+* Launch `runAnalysis.sh` with the corresponding flag.
 
-## Install stable branch
+Always remember to **change both** when switching configuration.
 
->git clone -b  egm_tnp_Prompt2018_v2_15pOfStat git@github.com:lsoffi/egm_tnp_analysis.git
+## Flags
 
-> source etc/scripts/setup_ROOT6.10.sh
+**Changing variables**:
+* **No flags** [`runAnalysis.sh`: no flags, `settings.py`: all flags are `False`]:
 
+  [Default] Runs analysis vs. $p_T$, $\eta$. Outputs to `$MY_EOS/TnP`.
+* **$\Delta R$ flags** [`runAnalysis.sh`: -deltaR, `settings.py`: is_vs_deltaR = True]:
 
-Compile with:
+  Runs analysis vs. $p_T$, $\Delta R$. Outputs to `$MY_EOS/TnP_vs_pt_deltaR`.
+* **$\Delta R, \eta$ flags** [`runAnalysis.sh`: -deltaR_eta, `settings.py`: is_vs_deltaR_eta = True]:
+  
+  Runs analysis vs. $\Delta R$, $\eta$. Outputs to `$MY_EOS/TnP_vs_deltaR_eta`.
 
->make
-
-
-## Quick description
-Package to handle analysis of tnp trees. The main tool is the python fitter
-
-   ===> tnpEGM_fitter.py
-
-The interface between the user and the fitter is solely done via the settings file.
-
-**IMPORTANT**
-In the following we refer to this file as "settings.py",
-anyway that is just a template file. you should run "settings_ele.py", or "settings_pho.py", or edit them according to your needs.
-
-   ===> etc/config/settings.py
-   	- set the flags (i.e. Working points) that can be tested
-   	- set the different samples and location
-	- set the fitting bins
-	- set the different cuts to be used
-	- set the output directory
-
-Help message:
->    python tnpEGM_fitter.py --help 
-
-The settings have always to be passed to the fitter
->    python tnpEGM_fitter.py etc/config/settings.py 
-
-Therefore several "settings.py" files  can be setup (for different run period for instance)
-
-
-## The different fitting steps
-Everything will be done for a specific flag (so the settings can be the same for different flags). Hence, the flag to be used must be specified each time (named myWP in following).
-
-**1. Create the bining.** To each bin is associated a cut that can be tuned bin by bin in the settings.py
-   * After setting up the settings.py check bins 
-
->   python tnpEGM_fitter.py etc/config/settings.py  --flag myWP --checkBins
-   
-   * if  you need additinal cuts for some bins (cleaning cuts), tune cuts in the settings.py, then recheck. 
-     Once satisfied, create the bining
-
->   python tnpEGM_fitter.py etc/config/settings.py  --flag myWP --createBins
-
-   * CAUTION: when recreacting bins, the output directory is overwritten! So be sure to not redo that once you are at step2
-
-**2. Create the histograms** with the different cuts... this is the longest step. Histograms will not be re-done later
-   
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --createHists
-
-**3. Do your first round of fits.**
-   * nominal fit
-   
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit
-   
-   * MC fit to constrain alternate signal parameters [note this is the only MC fit that makes sense]
-   
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit --mcSig --altSig
-
-   * Alternate signal fit (using constraints from previous fits)
-   
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit  --altSig
-
-   * Alternate background fit (using constraints from previous fits)
-   
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit  --altBkg
-
-**4. Check fits and redo failed ones.** (there is a web index.php in the plot directory to vizualize from the web)
-   * can redo a given bin using its bin number ib. 
-     The bin number can be found from --checkBins, directly in the ouput dir (or web interface)
-
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit --iBin ib
-   
-   * the initial parameters can be tuned for this particular bin in the settings.py file. 
-      Once the fit is good enough, do not redo all fits, just fix next failed fit.
-      One can redo any kind of fit bin by bin. For instance the MC with altSig fit (if the constraint parameters were bad in the altSig for instance)
-
->   python tnpEGM_fitter.py etc/config/settings.py --flag myWP --doFit --mcSig --altSig --iBin ib
-
-**5. egm txt ouput file.** Once all fits are fine, put everything in the egm format txt file
-
->   python tnpEGM_fitter.py etc/config/setting.py  --flag myWP --sumUp
-   
-
-## The settings file
-
-The settings file includes all the necessary information for a given setup of fit
-
-**- General settings.**
-
-    * flag: this is the Working point in the tnpTree  (pass: flagCut ; fail !flagCut). The name of the flag myWP is the one to be passed
-to the fitter. One can handle complex flags with a cut string (root cut string):
-> flag = { 'myWP' : myWPCutString } 
-
-    * baseOutDir: the output directory (will be created by the fitter)
-
-**- Sample definition.**
-
-    * tnpTreeDir: the directory in the tnpTree (different for phoID, eleID, reco, hlt)
-
-    * samplesDef: these are the main info
-      - data: data ntuple
-      - mcNom: nominal MC sample
-      - mcAlt: MC for generator syst
-      - tagSel: usually same as nominal MC + different base cuts: check the tag selection syst
-
-     The sample themselves are defined in etc/inputs/tnpSampleDef.py  (the attribute nEvts, lumi are not necessary for the fit per-se and can be omitted). 
-     A list of samples for ICHEP2016 from official egm production is already setup properly in the package. 
-     Then in the settings.py the sample can be specified further:
-     - sample.set_mctruth() : force mc truth on a MC sample
-     - sample.rename('xxx') : if a sample is used 2 times (like with 2 different sets of cuts), it has to be renamed for the second use
-     - sample.set_cut(cut)  : add a cut to define the sample (like a run range for data or an additional tag selection for alt tag selection syst)
-     - sample.set_weight('totWeight') : name of the weight to be used for MC reweighting (totWeight in this example). Note: the tool can handle a pu Tree to reweight a MC with different PU scenario (ask for further explanations and/or settings_rwPU.py example)
+**Changings cuts**:
+* **No flags**:
  
+  [Default] HLT+L1 efficiency is calculated.
+* **L1 flags** [`runAnalysis.sh`: -L1cuts, `settings.py`: is_L1cuts = True]:
 
-**- Cuts.**
+  Calculates HLT efficiency only (i.e. places base cuts that place us in the 100% efficient region of the L1 trigger). Outputs to `$MY_EOS/<path_depending_on_variables>_L1_cuts`.
 
-    * cutBase: Define here the main cut
-    * additionalCuts: can be used for cleaning cuts (or put additionalCuts = None)
+The two kinds of flags can be combined (e.g. to study HLT-only efficiency vs. $p_T$, $\Delta R$, run `runAnalysis.sh -deltaR -L1cuts` and, in `settings.py`, set both `is_deltaR = True` and `is_L1cuts = True`).
 
-**- Fitting parameters.**
-    
-    Define in this section the init parameters for the different fit, can be tuned to improve convergence.
+There are also some wrapper-only flags that can be used to perform specific actions:
 
-====================
-   
+* `-fit_only`: does not rebin data, but only reperforms the fits. This can save a lot of time when only changing fit parameters or fine-tuning the fits, but not binning, especially for large files.
+* `-copy_only`: only transfers output files to output folders.
+* `-draw_only`: does not rebin nor refit, but only redraws the efficiency plots.
+* `-2d_only`: does not rerun analysis on 1D projections, but just on 2D plot.
 
+## Changing selection and binning
+WIP...
 
-##  Update PU weights 
+## Fine-tuning
+[**Warning**: Refitting is currently only implemented for 2D distribution and 1D $y$ projection, but it should be easy to extend to 1d $x$ projection by simply copying the same structure.]
+[**Tip**: at this stage, run the program with the `-fit_only` flag.]
 
-1.Pileup files have to be computed with: python etc/scripts/pureweight.py
+If you notice the fit failing in some specific bin, you can specify the initial parameters to help it converge. To do so, you'll have to:
+* List the bins to be refit in the `bins_2d`, `bins_pt` lists inside `runAnalysis.sh`;
+  ** To avoid modifying the array every time you change configuration, use the `if` cases below it
+* Create a file for each bin named as `settings_bin<number>` for 2D projection and `settings_projPt_bin<number>` for 1D $y$ projection containing the model's initial parameter. Clone the existing example files in `etc/config` and modify the initial parameters (**NOTE**: the initial `import` MUST be left untouched).
 
-Here one has to update the name of the directory whre the files will be located and the corresponding names. If needed you have to recompute the data PU distributions
-and copying them to eos before doing this step, see point 3.
+Please remember to empty the array in `runAnalysis.sh` when running multiple configurations.
 
+## Output
+The program's output includes the following structure:
+```
+.
+├── altSig_data_2D_efficiency.pdf
+├── altSigFit
+├── projPt
+|   └── altSigFit
+├── projEta
+|   └── altSigFit
+|
+├── MC
+|   ├── altSigFit
+|   ├── projPt
+|   |   └── altSigFit
+|   └── projEta
+|       └── altSigFit
+|   
+└── ...
+```
 
-2.This pyhton uses the following: libPython/puReweighter.py.
+where:
 
-Here one nees to add the PU MC mix numbers that are available here: http://cmslxr.fnal.gov/source/SimGeneral/MixingModule/python/?v=CMSSW_9_4_0
+* `altSig_data_2D_efficiency.pdf` is the main output, containing the 2D plot and 1D projections of the efficiency vs. the two selected variables for both data and MC. It also includes scale factor plots.
+* the `altSigFit` subfolder contains the individual fit plots for each bin and category (passing/failing probes);
 
-
-3.The data PU distrubtions can be computed using the following instructions (similar to what is done in step1):
-
-pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 69200 --maxPileupBin 100 --numPileupBins 100 pileup_2017_41fb.root
-
-
-The nvtx and rho histos are not needed because we will use the pu method (type = 0) for the reweight.
-
-NB: Before using these py in order to load the needed libraires one has to run: 
-export  PYTHONPATH=$PYTHONPATH:/afs/cern.ch/user/s/soffi/scratch0/TEST/CMSSW-10-0-0-pre3/src/egm_tnp_analysis 
-
-
-#### adding remote (Fabrice version)
-git remote add origin git@github.com:fcouderc/egm_tnp_analysis.git
+[**Note**: the `projPt` folder always contains the $x$ variable (as plotted in 2D efficiency graphs. In the bin names in the output png, that is the second variable --sorry for the confusion!--), while `projEta` always contains the $y$ variable (first variable in bin names, but actually plotted on the $y$ axis in 2D efficiency).]
