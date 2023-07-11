@@ -7,7 +7,6 @@ Additionally, a global environment variable `$MY_EOS` must be defined containing
 * **For editing**: must setup CPython to edit `.pyc` files (which are converted to `.C` and must be then compiled with `make`).
 
 # Fork differences
-
 * A wrapper to run the code to obtain 1D projections has been added;
 * Since this code uses the alternative model as the main one (i.e. gaussian for signal + exponential for backgoound), all drawing was handled by the new macro `draw2Deff.C` (which, despite its name, also draws the 1D projections for each variable). This is to be used through the wrapper;
 * $y$ variable is not automatically extended to negative values, so the same code can be used for positive definite quantities (e.g. $\Delta R$);
@@ -96,3 +95,10 @@ where:
 * the `altSigFit` subfolder contains the individual fit plots for each bin and category (passing/failing probes);
 
 [**Note**: the `projPt` folder always contains the $x$ variable (as plotted in 2D efficiency graphs. In the bin names in the output png, that is the second variable --sorry for the confusion!--), while `projEta` always contains the $y$ variable (first variable in bin names, but actually plotted on the $y$ axis in 2D efficiency).]
+
+
+# Ausiliary code
+There are some other standalone scripts used for the analysis:
+
+* **`test_kinematics.C`**: plots some useful distributions for the used data sample.
+* **`closure_test/closure_test.C`**: performs a closure test by retrieving the efficiency results from the `/results` folder and using it as weight to draw a $p_T$ distribution, to be compared against the one obtained by simply asking for the trigger to fire.
