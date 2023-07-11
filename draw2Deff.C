@@ -46,7 +46,7 @@ std::pair<Double_t, Double_t> parse_x_y(std::string name, std::string varX, std:
     std::string range;
     
     do {
-      range = str.substr(0, str.find("_"));
+      range = str.substr(0, str.find("_"));hMuonPt_weighted->Draw();
       str = str.substr(str.find("_") + 1);
     } while(range.find("To") == string::npos);
     
@@ -92,9 +92,7 @@ std::string strip_for_print(std::string input){
 void draw2Deff(string outpath, string inpath){
 	TFile* f2D = TFile::Open(TString::Format("results%s/DoubleMu/egammaEffi.txt_EGM2D.root", inpath.c_str()), "read");
 
-	TH2F* h2 = (TH2F*)f2D->Get("EGamma_EffData2D");
-	
-
+	TH2F* h2 = (TH2F*)f2D->Get("EGamma_EffData2D");	
 
 	Bool_t is_deltaR = inpath.find("/vs_pt_deltaR") != string::npos;
 	Bool_t is_deltaR_eta = inpath.find("/vs_deltaR_eta") != string::npos;

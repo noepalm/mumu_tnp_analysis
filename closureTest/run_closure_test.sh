@@ -1,0 +1,1 @@
+echo $'TTree* tmp = Events->CloneTree()\n.L closureTest.C\nEvents m(tmp)\nm.Loop();' | root /eos/cms/store/group/phys_bphys/crovelli/nanoaod_X/Xnani2022_2023Mar20/BuToPsi2SKs_Psi2SToJPsiPiPi_JPsiToMuMu_RhoToPiPi_TuneCP5_13p6TeV_pythia8-evtgena/BuToPsi2SKs_Psi2SToJPsiPiPi_JPsiToMuMu_RhoToPiPi.root

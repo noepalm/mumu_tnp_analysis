@@ -3,9 +3,9 @@
 
 #if true, binning vs deltaR. Must also cadd -deltaR flag when launching runAnalysis.sh
 is_vs_deltaR = True
+is_vs_deltaR_eta = False
 is_tagInEB = False
 is_L1cuts = False
-is_vs_deltaR_eta = False
 is_prescale = False
 is_altref = True
 
@@ -56,6 +56,7 @@ tnpTreeDir = 'nano_'
 #     # 'tagSel' : tnpSamples.Parking_X['MC'].clone(),
 # }
 
+# [HLT_Mu8] when using main reference trigger, use dataE, dataF, dataG samples
 if not is_altref:
   samplesDef = {
     'data'   : tnpSamples.Parking_X['dataE'].clone(),
@@ -70,6 +71,7 @@ if not is_altref:
   samplesDef['data'].add_sample( tnpSamples.Parking_X['dataF'] )
   samplesDef['data'].add_sample( tnpSamples.Parking_X['dataG'] )
 
+# [HLT_Mu4_L1DoubleMu] use dataE_0, ... _7, dataF_0, ... _7, etc datasets
 else:
   samplesDef = {
     'data'   : tnpSamples.Parking_X['dataE_0'].clone(),
