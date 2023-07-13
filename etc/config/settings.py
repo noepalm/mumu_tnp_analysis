@@ -2,12 +2,12 @@
 # General settings
 
 #if true, binning vs deltaR. Must also cadd -deltaR flag when launching runAnalysis.sh
-is_vs_deltaR = True
-is_vs_deltaR_eta = False
+is_vs_deltaR = False
+is_vs_deltaR_eta = True
 is_tagInEB = False
 is_L1cuts = False
 is_prescale = False
-is_altref = True
+is_altref = False
 
 # flag to be Tested
 
@@ -131,6 +131,8 @@ if is_vs_deltaR:
 else:
     cutBase += ' && abs(Jpsi_m1_eta) < 2.6 && abs(Jpsi_m2_eta) < 2.6' #2.5 before
 cutBase += ' && Jpsi_nonfit_pt > 5.0' #4.9 nominal
+# cutBase += ' && Jpsi_fit_vprob > 0.005' #0.005 nominal
+
 
 if not is_altref:
   cutBase += ' && Jpsi_m1_pt > 7.8' #already imposed on data, but not on MC
@@ -143,7 +145,7 @@ if is_tagInEB:
 
 # L1 cuts (100% efficient)
 if is_L1cuts:
-    cutBase += '&& Jpsi_muonsDr < 1.3' #1.4 nominal
+    # cutBase += '&& Jpsi_muonsDr < 1.3' #1.4 nominal
     cutBase += '&& abs(Jpsi_m1_eta - Jpsi_m2_eta) < 1.5' #1.6 nominal
     cutBase += '&& Jpsi_m1_bestL1dR < 0.3 && Jpsi_m2_bestL1dR < 0.3'
 

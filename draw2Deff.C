@@ -46,7 +46,7 @@ std::pair<Double_t, Double_t> parse_x_y(std::string name, std::string varX, std:
     std::string range;
     
     do {
-      range = str.substr(0, str.find("_"));hMuonPt_weighted->Draw();
+      range = str.substr(0, str.find("_"));
       str = str.substr(str.find("_") + 1);
     } while(range.find("To") == string::npos);
     
