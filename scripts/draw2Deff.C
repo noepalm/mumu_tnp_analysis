@@ -90,7 +90,7 @@ std::string strip_for_print(std::string input){
 //----- MAIN LOOP ------//
 
 void draw2Deff(string outpath, string inpath){
-	TFile* f2D = TFile::Open(TString::Format("results%s/DoubleMu/egammaEffi.txt_EGM2D.root", inpath.c_str()), "read");
+	TFile* f2D = TFile::Open(TString::Format("../results%s/DoubleMu/egammaEffi.txt_EGM2D.root", inpath.c_str()), "read");
 
 	TH2F* h2 = (TH2F*)f2D->Get("EGamma_EffData2D");	
 
@@ -106,7 +106,7 @@ void draw2Deff(string outpath, string inpath){
 
 	// 1D vs pT efficiency plot
 	std::string line;
-	ifstream fpt(("results" + inpath + "/projPt/DoubleMu/egammaEffi.txt").c_str(), ios::in);
+	ifstream fpt(("../results" + inpath + "/projPt/DoubleMu/egammaEffi.txt").c_str(), ios::in);
 	std::vector<Double_t> pt_bin_center;
 	std::vector<Double_t> pt_bin_center_err;
 	std::vector<Double_t> pt_bin_eff;
@@ -140,7 +140,7 @@ void draw2Deff(string outpath, string inpath){
 	}
 
 	// 1D vs eta efficiency
-	ifstream feta((string("results") + inpath + "/projEta/DoubleMu/egammaEffi.txt").c_str(), ios::in);
+	ifstream feta((string("../results") + inpath + "/projEta/DoubleMu/egammaEffi.txt").c_str(), ios::in);
 	std::vector<Double_t> eta_bin_center;
 	std::vector<Double_t> eta_bin_center_err;
 	std::vector<Double_t> eta_bin_eff;
@@ -175,7 +175,7 @@ void draw2Deff(string outpath, string inpath){
 
 
 	// 2D vs pT, eta
-	ifstream fpteta(("results" + inpath + "/DoubleMu/egammaEffi.txt").c_str(), ios::in);
+	ifstream fpteta(("../results" + inpath + "/DoubleMu/egammaEffi.txt").c_str(), ios::in);
 	//In order: x bin center, x bin width, y bin center, y bin width, efficiency, error
 	std::vector<std::array<Double_t, 6>> pt_eta_point;     //to save 2D coords + value, err for 2D graph
 	std::vector<std::array<Double_t, 6>> pt_eta_mc_point;  //same
@@ -367,12 +367,12 @@ void draw2Deff(string outpath, string inpath){
 	// For any bin (both 2D plots and 1D projection), if any of the two categories are empty, black out the corresponding efficiency
 	// (the fit does not fail, but rather returns a random number, so we have to protect against it by hand)
 
-	TFile* fFitRes_data = TFile::Open(TString::Format("results%s/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
-	TFile* fFitRes_MC = TFile::Open(TString::Format("results%s/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
-	TFile* fFitRes_projPt_data = TFile::Open(TString::Format("results%s/projPt/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
-	TFile* fFitRes_projPt_MC = TFile::Open(TString::Format("results%s/projPt/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
-	TFile* fFitRes_projEta_data = TFile::Open(TString::Format("results%s/projEta/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
-	TFile* fFitRes_projEta_MC = TFile::Open(TString::Format("results%s/projEta/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_data = TFile::Open(TString::Format("../results%s/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_MC = TFile::Open(TString::Format("../results%s/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_projPt_data = TFile::Open(TString::Format("../results%s/projPt/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_projPt_MC = TFile::Open(TString::Format("../results%s/projPt/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_projEta_data = TFile::Open(TString::Format("../results%s/projEta/DoubleMu/data_DoubleMu.altSigFit.root", inpath.c_str()), "read");
+	TFile* fFitRes_projEta_MC = TFile::Open(TString::Format("../results%s/projEta/DoubleMu/MC_DoubleMu.altSigFit.root", inpath.c_str()), "read");
 	
 	
 	std::array<TFile*, 6> fFitRes_list = {fFitRes_data, fFitRes_MC, 

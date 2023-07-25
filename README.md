@@ -101,4 +101,4 @@ where:
 There are some other standalone scripts used for the analysis:
 
 * **`test_kinematics.C`**: plots some useful distributions for the used data sample.
-* **`closure_test/closure_test.C`**: performs a closure test by retrieving the efficiency results from the `/results` folder and using it as weight to draw a $p_T$ distribution, to be compared against the one obtained by simply asking for the trigger to fire.
+* **`closure_test/closure_test.C`** [run with `source closure_test/run_closure_test.sh`] : performs a closure test by retrieving the efficiency results from the `/results` folder and using it as weight to draw a $p_T$ distribution, to be compared against the one obtained by simply asking for the trigger to fire.

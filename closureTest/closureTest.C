@@ -27,6 +27,10 @@ using namespace std;
 
 void Events::Loop(){
   
+  Bool_t is_separate_weights = 1;
+  Bool_t is_TnP = 1;
+  Bool_t is_normalized = 0;
+
   if (fChain == 0) return;
 
   // path for saving plots
@@ -66,6 +70,16 @@ void Events::Loop(){
     hMuonPt_weighted_lowbins[i]->Sumw2();
     hMuonPt_triggered_lowbins[i]->Sumw2();
   }
+
+  // ROW 2: overall histograms (tag and probe in same histogram)
+  TH1F* hMuonPt_weighted_jpsi = new TH1F("hMuonPt_weighted_jpsi", "hMuonPt_weighted_jpsi", 50, 2, 50);
+  TH1F* hMuonPt_triggered_jpsi = new TH1F("hMuonPt_triggered_jpsi", "hMuonPt_triggered_jpsi", 50, 2, 50);
+
+  TH1F* hMuonPt_weighted_lowbins_jpsi = new TH1F("hMuonPt_weighted_lowbins_jpsi", "hMuonPt_weighted_lowbins_jpsi", 7, bin_low);
+  TH1F* hMuonPt_triggered_lowbins_jpsi = new TH1F("hMuonPt_triggered_lowbins_jpsi", "hMuonPt_triggered_lowbins_jpsi", 7, bin_low);
+
+  TH1F* hMuonMass_weighted_jpsi = new TH1F("hMuonMass_weighted_jpsi", "hMuonMass_weighted_jpsi", 50, 2.95, 3.25);
+  TH1F* hMuonMass_triggered_jpsi = new TH1F("hMuonMass_triggered_jpsi", "hMuonMass_triggered_jpsi", 50, 2.95, 3.25);
 
   /*-----------------------------------------------------*/
   /*----------------  RETRIEVE WEIGHTS ------------------*/
@@ -150,7 +164,7 @@ void Events::Loop(){
   // Retrieve weights from direct MC calculation
   */
 
-  TFile* altweights_file = TFile::Open("~/X_trigger_studies/turnon_curves.root");
+  TFile* altweights_file = TFile::Open("~/X_trigger_studies/turnon_curves_thesisBinning.root");
   if(!altweights_file){
     std::cout << "ERROR: .root file containing MC turn-on curves could not be found." << std::endl;
     exit(-1);
@@ -314,27 +328,46 @@ void Events::Loop(){
 
         savedB0s++;
 
-        Double_t weight1;
-        if(v_mumu_fitted_mu1.Pt() < 4) weight1 = 0;
-        else weight1 = mc_hpteta->GetBinContent(mc_hpteta->FindBin(v_mumu_fitted_mu1.Pt(), v_mumu_fitted_mu1.Eta()));
-        Double_t weight2 = mc_hpteta->GetBinContent(mc_hpteta->FindBin(v_mumu_fitted_mu2.Pt(), v_mumu_fitted_mu2.Eta()));
+        Double_t weight1, weight2;
 
-        // Double_t weight1 = eff_tag->GetBinContent(eff_tag->FindBin(v_mumu_fitted_mu1.Pt()));
-        // Double_t weight2 = eff_probe->GetBinContent(eff_probe->FindBin(v_mumu_fitted_mu2.Pt()));
+        if(is_TnP){
+          if(v_mumu_fitted_mu1.Pt() < 4) weight1 = 0;
+          else weight1 = mc_hpteta->GetBinContent(mc_hpteta->FindBin(v_mumu_fitted_mu1.Pt(), v_mumu_fitted_mu1.Eta()));
+          weight2 = mc_hpteta->GetBinContent(mc_hpteta->FindBin(v_mumu_fitted_mu2.Pt(), v_mumu_fitted_mu2.Eta()));
+        } else {
+          weight1 = eff_tag->GetBinContent(eff_tag->FindBin(v_mumu_fitted_mu1.Pt()));
+          weight2 = eff_probe->GetBinContent(eff_probe->FindBin(v_mumu_fitted_mu2.Pt()));
+        }
 
         Double_t wtot = weight1*weight2;
 
-        if(wtot > 0){ // just for optimization, can be skipped
+        if(wtot > 0 || is_separate_weights){ // just for optimization, can be skipped
+
           // Weighted distribution
-          hMuonPt_weighted[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
-          hMuonPt_weighted_detailed[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
-          hMuonPt_weighted_lowbins[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
-          
-          hMuonPt_weighted[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
-          hMuonPt_weighted_detailed[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
-          hMuonPt_weighted_lowbins[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
+          if(is_separate_weights){
+            hMuonPt_weighted[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
+            hMuonPt_weighted_detailed[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
+            hMuonPt_weighted_lowbins[0]->Fill(v_mumu_fitted_mu1.Pt(), weight1);
+            
+            hMuonPt_weighted[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
+            hMuonPt_weighted_detailed[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
+            hMuonPt_weighted_lowbins[1]->Fill(v_mumu_fitted_mu2.Pt(), weight2);
+          }
+          else {
+            hMuonPt_weighted[0]->Fill(v_mumu_fitted_mu1.Pt(), wtot);
+            hMuonPt_weighted_detailed[0]->Fill(v_mumu_fitted_mu1.Pt(), wtot);
+            hMuonPt_weighted_lowbins[0]->Fill(v_mumu_fitted_mu1.Pt(), wtot);
+            
+            hMuonPt_weighted[1]->Fill(v_mumu_fitted_mu2.Pt(), wtot);
+            hMuonPt_weighted_detailed[1]->Fill(v_mumu_fitted_mu2.Pt(), wtot);
+            hMuonPt_weighted_lowbins[1]->Fill(v_mumu_fitted_mu2.Pt(), wtot);
+          }
+
+          hMuonPt_weighted_jpsi->Fill((v_mumu_fitted_mu1 + v_mumu_fitted_mu2).Pt(), wtot);
+          hMuonPt_weighted_lowbins_jpsi->Fill((v_mumu_fitted_mu1 + v_mumu_fitted_mu2).Pt(), wtot);
+          hMuonMass_weighted_jpsi->Fill((v_mumu_mu1 + v_mumu_mu2).M(), wtot);
+
         }
-        
 
         if(fChain->GetLeaf(triggerPaths[0].c_str())->GetValue()){
 
@@ -352,50 +385,39 @@ void Events::Loop(){
             hMuonPt_triggered_detailed[1]->Fill(v_mumu_fitted_mu2.Pt());
             hMuonPt_triggered_lowbins[0]->Fill(v_mumu_fitted_mu1.Pt());
             hMuonPt_triggered_lowbins[1]->Fill(v_mumu_fitted_mu2.Pt());
+
+            hMuonPt_triggered_jpsi->Fill((v_mumu_fitted_mu1 + v_mumu_fitted_mu2).Pt());
+            hMuonPt_triggered_lowbins_jpsi->Fill((v_mumu_fitted_mu1 + v_mumu_fitted_mu2).Pt());
+            hMuonMass_triggered_jpsi->Fill((v_mumu_mu1 + v_mumu_mu2).M());
           }
         }
       }
 	  }    
   } //event loop
 
-  // ROW 2: overall histograms (tag and probe in same histogram)
-  TH1F* hMuonPt_weighted_tot = (TH1F*)hMuonPt_weighted[0]->Clone("hMuonPt_weighted_tot");
-  TH1F* hMuonPt_triggered_tot = (TH1F*)hMuonPt_triggered[0]->Clone("hMuonPt_triggered_tot");
-
-  TH1F* hMuonPt_weighted_detailed_tot = (TH1F*)hMuonPt_weighted_detailed[0]->Clone("hMuonPt_weighted_detailed_tot");
-  TH1F* hMuonPt_triggered_detailed_tot = (TH1F*)hMuonPt_triggered_detailed[0]->Clone("hMuonPt_triggered_detailed_tot");
-
-  TH1F* hMuonPt_weighted_lowbins_tot = (TH1F*)hMuonPt_weighted_lowbins[0]->Clone("hMuonPt_weighted_lowbins_tot");
-  TH1F* hMuonPt_triggered_lowbins_tot = (TH1F*)hMuonPt_triggered_lowbins[0]->Clone("hMuonPt_triggered_lowbins_tot");
-  
-  hMuonPt_weighted_tot->Add(hMuonPt_weighted[1]);
-  hMuonPt_triggered_tot->Add(hMuonPt_triggered[1]);
-  hMuonPt_weighted_detailed_tot->Add(hMuonPt_weighted_detailed[1]);
-  hMuonPt_triggered_detailed_tot->Add(hMuonPt_triggered_detailed[1]);
-  hMuonPt_weighted_lowbins_tot->Add(hMuonPt_weighted_lowbins[1]);
-  hMuonPt_triggered_lowbins_tot->Add(hMuonPt_triggered_lowbins[1]);
-
-
   // RESCALING
-  // hMuonPt_triggered_tot->Scale(1./hMuonPt_triggered_tot->Integral());
-  // hMuonPt_weighted_tot->Scale(1./hMuonPt_weighted_tot->Integral());
 
-  // hMuonPt_triggered_detailed_tot->Scale(1./hMuonPt_triggered_detailed_tot->Integral());
-  // hMuonPt_weighted_detailed_tot->Scale(1./hMuonPt_weighted_detailed_tot->Integral());
-
-  // hMuonPt_triggered_lowbins_tot->Scale(1./hMuonPt_triggered_lowbins_tot->Integral());
-  // hMuonPt_weighted_lowbins_tot->Scale(1./hMuonPt_weighted_lowbins_tot->Integral());
-
-  // for(int i = 0; i < 2; i++){
-  //   hMuonPt_triggered[i]->Scale(1./hMuonPt_triggered[i]->Integral());
-  //   hMuonPt_weighted[i]->Scale(1./hMuonPt_weighted[i]->Integral());
+  if(is_normalized){
+    hMuonPt_triggered_jpsi->Scale(1./hMuonPt_triggered_jpsi->Integral());
+    hMuonPt_weighted_jpsi->Scale(1./hMuonPt_weighted_jpsi->Integral());
     
-  //   hMuonPt_triggered_detailed[i]->Scale(1./hMuonPt_triggered_detailed[i]->Integral());
-  //   hMuonPt_weighted_detailed[i]->Scale(1./hMuonPt_weighted_detailed[i]->Integral());
+    hMuonPt_triggered_lowbins_jpsi->Scale(1./hMuonPt_triggered_lowbins_jpsi->Integral());
+    hMuonPt_weighted_lowbins_jpsi->Scale(1./hMuonPt_weighted_lowbins_jpsi->Integral());
 
-  //   hMuonPt_triggered_lowbins[i]->Scale(1./hMuonPt_triggered_lowbins[i]->Integral());
-  //   hMuonPt_weighted_lowbins[i]->Scale(1./hMuonPt_weighted_lowbins[i]->Integral());
-  // }
+    hMuonMass_triggered_jpsi->Scale(1./hMuonMass_triggered_jpsi->Integral());
+    hMuonMass_weighted_jpsi->Scale(1./hMuonMass_weighted_jpsi->Integral());    
+    
+    for(int i = 0; i < 2; i++){
+      hMuonPt_triggered[i]->Scale(1./hMuonPt_triggered[i]->Integral());
+      hMuonPt_weighted[i]->Scale(1./hMuonPt_weighted[i]->Integral());
+      
+      hMuonPt_triggered_detailed[i]->Scale(1./hMuonPt_triggered_detailed[i]->Integral());
+      hMuonPt_weighted_detailed[i]->Scale(1./hMuonPt_weighted_detailed[i]->Integral());
+      
+      hMuonPt_triggered_lowbins[i]->Scale(1./hMuonPt_triggered_lowbins[i]->Integral());
+      hMuonPt_weighted_lowbins[i]->Scale(1./hMuonPt_weighted_lowbins[i]->Integral());
+    }
+  }
 
   /*---- PLOTTING ----*/
 
@@ -408,61 +430,62 @@ void Events::Loop(){
   gPad->SetRightMargin(.05);
   gPad->SetLeftMargin(.15);
 
-  hMuonPt_weighted_tot->SetMaximum(TMath::Max(hMuonPt_weighted_tot->GetMaximum(), hMuonPt_triggered_tot->GetMaximum())*1.1);
+  hMuonPt_weighted_jpsi->SetMaximum(TMath::Max(hMuonPt_weighted_jpsi->GetMaximum(), hMuonPt_triggered_jpsi->GetMaximum())*1.1);
   
-  hMuonPt_weighted_tot->SetTitle("Overall p_{T} distribution [full range]");
-  hMuonPt_weighted_tot->GetXaxis()->SetTitle("p_{T} [GeV]");
-  hMuonPt_weighted_tot->GetYaxis()->SetTitle("Counts");
-  hMuonPt_weighted_tot->SetLineColor(62);
-  hMuonPt_weighted_tot->Draw("HISTE");
-  hMuonPt_triggered_tot->SetLineColor(95);
-  hMuonPt_triggered_tot->Draw("HISTE SAMES");
+  hMuonPt_weighted_jpsi->SetTitle("J/#psi p_{T} distribution");
+  hMuonPt_weighted_jpsi->GetXaxis()->SetTitle("p_{T} [GeV]");
+  hMuonPt_weighted_jpsi->GetYaxis()->SetTitle("Counts");
+  hMuonPt_weighted_jpsi->SetLineColor(62);
+  hMuonPt_weighted_jpsi->Draw("HISTE");
+  hMuonPt_triggered_jpsi->SetLineColor(95);
+  hMuonPt_triggered_jpsi->Draw("HISTE SAMES");
 
   auto leg1 = new TLegend(.55, 0.7, .95, 0.9);
-  leg1->AddEntry(hMuonPt_weighted_tot, TString::Format("Weighted: %d evs", int(hMuonPt_weighted_tot->Integral())), "l");
-  leg1->AddEntry(hMuonPt_triggered_tot, TString::Format("Triggered: %d evs", int(hMuonPt_triggered_tot->Integral())), "l");
+  leg1->AddEntry(hMuonPt_weighted_jpsi, TString::Format("Weighted: %d evs", int(hMuonPt_weighted_jpsi->Integral())), "l");
+  leg1->AddEntry(hMuonPt_triggered_jpsi, TString::Format("Triggered: %d evs", int(hMuonPt_triggered_jpsi->Integral())), "l");
   leg1->Draw();
-
-  c1->cd(2);
-  gPad->SetRightMargin(.05);
-  gPad->SetLeftMargin(.15);
-
-  hMuonPt_weighted_detailed_tot->SetMaximum(TMath::Max(hMuonPt_weighted_detailed_tot->GetMaximum(), hMuonPt_triggered_detailed_tot->GetMaximum())*1.1);
-
-  hMuonPt_weighted_detailed_tot->SetTitle("Overall p_{T} distribution [zoomed]");
-  hMuonPt_weighted_detailed_tot->GetXaxis()->SetTitle("p_{T} [GeV]");
-  hMuonPt_weighted_detailed_tot->GetYaxis()->SetTitle("Counts");
-  hMuonPt_weighted_detailed_tot->SetLineColor(62);
-  hMuonPt_weighted_detailed_tot->Draw("HISTE");
-  hMuonPt_triggered_detailed_tot->SetLineColor(95);
-  hMuonPt_triggered_detailed_tot->Draw("HISTE SAMES");
-
-  auto leg2 = new TLegend(.55, 0.7, .95, 0.9);
-  leg2->AddEntry(hMuonPt_weighted_detailed_tot, TString::Format("Weighted: %d evs", int(hMuonPt_weighted_detailed_tot->Integral())), "l");
-  leg2->AddEntry(hMuonPt_triggered_detailed_tot, TString::Format("Triggered: %d evs", int(hMuonPt_triggered_detailed_tot->Integral())), "l");
-  leg2->Draw();
   
-  c1->cd(3);
+  c1->cd(2);
   gPad->SetRightMargin(.05);
   gPad->SetLeftMargin(.15);
   gPad->SetLogx();
 
-  hMuonPt_weighted_lowbins_tot->SetMaximum(TMath::Max(hMuonPt_weighted_lowbins_tot->GetMaximum(), hMuonPt_triggered_lowbins_tot->GetMaximum())*1.1);
+  hMuonPt_weighted_lowbins_jpsi->SetMaximum(TMath::Max(hMuonPt_weighted_lowbins_jpsi->GetMaximum(), hMuonPt_triggered_lowbins_jpsi->GetMaximum())*1.1);
 
-  hMuonPt_weighted_lowbins_tot->GetXaxis()->SetMoreLogLabels();
-  hMuonPt_weighted_lowbins_tot->GetXaxis()->SetTitleOffset(1.25);
-  hMuonPt_weighted_lowbins_tot->SetTitle("Overall p_{T} distribution [accurate binning]");
-  hMuonPt_weighted_lowbins_tot->GetXaxis()->SetTitle("p_{T} [GeV]");
-  hMuonPt_weighted_lowbins_tot->GetYaxis()->SetTitle("Counts");
-  hMuonPt_weighted_lowbins_tot->SetLineColor(62);
-  hMuonPt_weighted_lowbins_tot->Draw("HISTE SAMES");
-  hMuonPt_triggered_lowbins_tot->SetLineColor(95);
-  hMuonPt_triggered_lowbins_tot->Draw("HISTE SAMES");
+  hMuonPt_weighted_lowbins_jpsi->GetXaxis()->SetMoreLogLabels();
+  hMuonPt_weighted_lowbins_jpsi->GetXaxis()->SetTitleOffset(1.25);
+  hMuonPt_weighted_lowbins_jpsi->SetTitle("J/#psi p_{T} distribution [accurate binning]");
+  hMuonPt_weighted_lowbins_jpsi->GetXaxis()->SetTitle("p_{T} [GeV]");
+  hMuonPt_weighted_lowbins_jpsi->GetYaxis()->SetTitle("Counts");
+  hMuonPt_weighted_lowbins_jpsi->SetLineColor(62);
+  hMuonPt_weighted_lowbins_jpsi->Draw("HISTE SAMES");
+  hMuonPt_triggered_lowbins_jpsi->SetLineColor(95);
+  hMuonPt_triggered_lowbins_jpsi->Draw("HISTE SAMES");
+
+  auto leg2 = new TLegend(.2, 0.7, .55, 0.9);
+  leg2->AddEntry(hMuonPt_weighted_lowbins_jpsi, TString::Format("Weighted: %d evs", int(hMuonPt_weighted_lowbins_jpsi->Integral())), "l");
+  leg2->AddEntry(hMuonPt_triggered_lowbins_jpsi, TString::Format("Triggered: %d evs", int(hMuonPt_triggered_lowbins_jpsi->Integral())), "l");
+  leg2->Draw();
+
+  c1->cd(3);
+  gPad->SetRightMargin(.05);
+  gPad->SetLeftMargin(.15);
+
+  hMuonMass_weighted_jpsi->SetMaximum(TMath::Max(hMuonMass_weighted_jpsi->GetMaximum(), hMuonMass_triggered_jpsi->GetMaximum())*1.1);
+
+  hMuonMass_weighted_jpsi->SetTitle("J/#psi mass distribution");
+  hMuonMass_weighted_jpsi->GetXaxis()->SetTitle("p_{T} [GeV]");
+  hMuonMass_weighted_jpsi->GetYaxis()->SetTitle("Counts");
+  hMuonMass_weighted_jpsi->SetLineColor(62);
+  hMuonMass_weighted_jpsi->Draw("HISTE");
+  hMuonMass_triggered_jpsi->SetLineColor(95);
+  hMuonMass_triggered_jpsi->Draw("HISTE SAMES");
 
   auto leg3 = new TLegend(.55, 0.7, .95, 0.9);
-  leg3->AddEntry(hMuonPt_weighted_lowbins_tot, TString::Format("Weighted: %d evs", int(hMuonPt_weighted_lowbins_tot->Integral())), "l");
-  leg3->AddEntry(hMuonPt_triggered_lowbins_tot, TString::Format("Triggered: %d evs", int(hMuonPt_triggered_lowbins_tot->Integral())), "l");
+  leg3->AddEntry(hMuonMass_weighted_jpsi, TString::Format("Weighted: %d evs", int(hMuonMass_weighted_jpsi->Integral())), "l");
+  leg3->AddEntry(hMuonMass_triggered_jpsi, TString::Format("Triggered: %d evs", int(hMuonMass_triggered_jpsi->Integral())), "l");
   leg3->Draw();
+
 
   // ROW 2
   c1->cd(4);
@@ -563,6 +586,15 @@ void Events::Loop(){
 
 
 	gStyle->SetLineScalePS(1.75);
-  c1->SaveAs(PATH + "closureTest.pdf");
+	
+	string outname = "closureTest";
+	if(is_separate_weights) outname += "_separateWeights";
+  else outname += "_multipliedWeights";
+	if(is_TnP) outname += "_TnP";
+  else outname += "_noTnP";
+  if(is_normalized) outname += "_normalized";
+  outname += ".pdf";
+
+  c1->SaveAs(PATH + outname.c_str());
 
 }
